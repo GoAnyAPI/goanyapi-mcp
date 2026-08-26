@@ -1,0 +1,24 @@
+{
+  "name": "go-any-api-mcp",
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.12.1",
+  "private": true,
+  "description": "GoAnyAPI MCP server",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "dev": "wrangler dev",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^4.34.0"
+  }
+}

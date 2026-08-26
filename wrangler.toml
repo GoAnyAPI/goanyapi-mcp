@@ -1,0 +1,6 @@
+name = "go-any-api-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-08-26"
+
+[vars]
+GOANYAPI_API_BASE_URL = "https://api.goanyapi.com"
