@@ -26,7 +26,13 @@ Windows PowerShell：
 $env:GOANYAPI_API_KEY="你的 GoAnyAPI API Key"
 ```
 
-建议在启动 Codex、Claude Code 或 Cursor 之前设置环境变量。
+上面的写法只对当前 PowerShell 窗口生效。若希望 Windows 用户环境变量持久生效，可以使用：
+
+```powershell
+[Environment]::SetEnvironmentVariable("GOANYAPI_API_KEY", "你的 GoAnyAPI API Key", "User")
+```
+
+设置持久环境变量后，需要重新打开终端并重启 Codex、Claude Code 或 Cursor，已经运行的客户端不会自动读取新的环境变量。
 
 ### 3. MCP 服务地址
 
@@ -55,6 +61,27 @@ bearer_token_env_var = "GOANYAPI_API_KEY"
 ```
 
 重启 Codex 后即可使用。Codex 会从 `GOANYAPI_API_KEY` 环境变量读取密钥，并自动添加认证请求头。
+
+#### 通过对话配置
+
+也可以让支持终端和配置文件操作的 AI 客户端通过对话完成接入。例如，在 Codex 中发送：
+
+```text
+请帮我接入 GoAnyAPI MCP。
+服务地址：https://mcp.goanyapi.com/mcp
+认证方式：从环境变量 GOANYAPI_API_KEY 读取 Bearer Token。
+请把配置写入 Codex 的用户级 MCP 配置，验证 goanyapi 已启用，并且不要把真实 API Key 写入配置文件。
+```
+
+如果 AI 客户端具备终端操作权限，也可以通过对话设置 API Key 环境变量。例如：
+
+```text
+请将我提供的 GoAnyAPI API Key 设置为当前 Windows 用户的持久环境变量 GOANYAPI_API_KEY。
+请不要在回复中回显 API Key，也不要把它写入项目文件、MCP 配置文件或 Git 仓库。
+设置完成后，仅验证环境变量已存在，然后帮我检查 goanyapi MCP 配置。
+```
+
+API Key 应通过客户端的安全输入或本机密钥管理器提供，不要直接粘贴到公开对话中。对话式配置需要用户授权终端和环境变量操作；设置完成后重新打开终端并重启客户端，再发送自然语言请求即可。
 
 ### Claude Code（cc）
 
@@ -163,3 +190,40 @@ https://mcp.goanyapi.com/health
 ```
 
 健康检查只用于确认服务在线，调用具体工具仍然需要有效的 API Key。
+
+### Windows 沙箱阻止网络请求
+
+如果手动测试时看到类似下面的错误：
+
+```text
+curl: (7) Failed to connect to mcp.goanyapi.com port 443
+```
+
+这通常表示当前终端或 AI 客户端的沙箱禁止出站网络访问，不代表 MCP 地址或 API Key 配置错误。先重启客户端，让客户端的 MCP 管理器重新加载配置；如果仍然失败，请检查代理、防火墙或企业网络是否允许访问：
+
+```text
+mcp.goanyapi.com:443
+```
+
+不要为了测试而关闭全部沙箱限制。可以使用客户端提供的网络白名单或受控网络权限，仅允许访问所需域名。
+
+### PowerShell 弹出网页脚本安全提示
+
+Windows PowerShell 5.1 使用 `Invoke-WebRequest` 请求 MCP 时，可能弹出提示，要求确认网页脚本执行。这是 PowerShell 网页解析器的提示，不是 GoAnyAPI 的 MCP 错误。手动测试时可以使用：
+
+```powershell
+Invoke-WebRequest -UseBasicParsing ...
+```
+
+或者改用 `Invoke-RestMethod` / `curl.exe`，避免使用网页脚本解析器。MCP 返回 JSON 时，推荐使用 `Invoke-RestMethod`。
+
+### 如何确认 Codex 已加载 MCP
+
+在终端执行：
+
+```bash
+codex mcp get goanyapi
+codex mcp list
+```
+
+确认服务显示为 `enabled`，传输类型为 `streamable_http`，并且 Bearer Token 环境变量为 `GOANYAPI_API_KEY`。如果是在设置环境变量后才启动客户端，必须完全退出并重新打开客户端。
