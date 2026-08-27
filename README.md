@@ -219,13 +219,13 @@ Invoke-WebRequest -UseBasicParsing ...
 
 或者改用 `Invoke-RestMethod` / `curl.exe`，避免使用网页脚本解析器。MCP 返回 JSON 时，推荐使用 `Invoke-RestMethod`。
 
-### 如何确认 Codex 已加载 MCP
+### 配置变更后是否需要重启客户端
 
-在终端执行：
+修改 MCP 配置文件或环境变量后，客户端需要重新加载配置。部分客户端支持重新连接或热加载，但为了确保 MCP 服务和 API Key 都已生效，通常建议完全退出后重新打开客户端：
 
-```bash
-codex mcp get goanyapi
-codex mcp list
-```
+- Codex：重启 Codex。
+- Claude Code：启动新的会话，并使用 `/mcp` 检查连接状态。
+- Cursor：重新加载窗口或重启 Cursor。
+- 其他 AI 客户端：优先使用客户端提供的 Reload、Reconnect 或 Restart 功能。
 
-确认服务显示为 `enabled`，传输类型为 `streamable_http`，并且 Bearer Token 环境变量为 `GOANYAPI_API_KEY`。如果是在设置环境变量后才启动客户端，必须完全退出并重新打开客户端。
+如果客户端仍然没有显示工具，请确认 MCP 地址、环境变量和认证配置无误后，再重新加载或重启客户端。
