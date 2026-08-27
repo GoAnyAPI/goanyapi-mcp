@@ -34,6 +34,16 @@ $env:GOANYAPI_API_KEY="你的 GoAnyAPI API Key"
 
 设置持久环境变量后，需要重新打开终端并重启 Codex、Claude Code 或 Cursor，已经运行的客户端不会自动读取新的环境变量。
 
+如果 AI 客户端具备终端操作权限，也可以通过对话设置 API Key 环境变量。例如：
+
+```text
+请将我提供的 GoAnyAPI API Key 设置为当前 Windows 用户的持久环境变量 GOANYAPI_API_KEY。
+请不要在回复中回显 API Key，也不要把它写入项目文件、MCP 配置文件或 Git 仓库。
+设置完成后，仅验证环境变量已存在，然后帮我检查 goanyapi MCP 配置。
+```
+
+API Key 应通过客户端的安全输入或本机密钥管理器提供，不要直接粘贴到公开对话中。对话式配置需要用户授权终端和环境变量操作。
+
 ### 3. MCP 服务地址
 
 正式 MCP 服务地址：
@@ -50,6 +60,19 @@ Authorization: Bearer <GOANYAPI_API_KEY>
 
 ## 接入 AI 客户端
 
+### 通过对话配置
+
+如果 AI 客户端具备终端和配置文件操作权限，可以通过对话完成 MCP 接入，不限于 Codex。例如，在支持对话式操作的 AI 客户端中发送：
+
+```text
+请帮我接入 GoAnyAPI MCP。
+服务地址：https://mcp.goanyapi.com/mcp
+认证方式：从环境变量 GOANYAPI_API_KEY 读取 Bearer Token。
+请根据当前 AI 客户端的 MCP 配置格式完成配置，验证 goanyapi 已启用，并且不要把真实 API Key 写入配置文件。
+```
+
+对话式配置需要用户授权终端和配置文件操作。配置完成后重新打开终端并重启客户端，再发送自然语言请求即可。
+
 ### Codex
 
 在 `~/.codex/config.toml` 中加入：
@@ -61,27 +84,6 @@ bearer_token_env_var = "GOANYAPI_API_KEY"
 ```
 
 重启 Codex 后即可使用。Codex 会从 `GOANYAPI_API_KEY` 环境变量读取密钥，并自动添加认证请求头。
-
-#### 通过对话配置
-
-也可以让支持终端和配置文件操作的 AI 客户端通过对话完成接入。例如，在 Codex 中发送：
-
-```text
-请帮我接入 GoAnyAPI MCP。
-服务地址：https://mcp.goanyapi.com/mcp
-认证方式：从环境变量 GOANYAPI_API_KEY 读取 Bearer Token。
-请把配置写入 Codex 的用户级 MCP 配置，验证 goanyapi 已启用，并且不要把真实 API Key 写入配置文件。
-```
-
-如果 AI 客户端具备终端操作权限，也可以通过对话设置 API Key 环境变量。例如：
-
-```text
-请将我提供的 GoAnyAPI API Key 设置为当前 Windows 用户的持久环境变量 GOANYAPI_API_KEY。
-请不要在回复中回显 API Key，也不要把它写入项目文件、MCP 配置文件或 Git 仓库。
-设置完成后，仅验证环境变量已存在，然后帮我检查 goanyapi MCP 配置。
-```
-
-API Key 应通过客户端的安全输入或本机密钥管理器提供，不要直接粘贴到公开对话中。对话式配置需要用户授权终端和环境变量操作；设置完成后重新打开终端并重启客户端，再发送自然语言请求即可。
 
 ### Claude Code（cc）
 
