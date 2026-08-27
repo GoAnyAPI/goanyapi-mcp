@@ -4,3 +4,15 @@ compatibility_date = "2026-08-26"
 
 [vars]
 GOANYAPI_API_BASE_URL = "https://api.goanyapi.com"
+
+[env.dev]
+name = "go-any-api-mcp-dev"
+
+[env.dev.vars]
+GOANYAPI_API_BASE_URL = "https://api2.goanyapi.com"
+
+[env.production]
+name = "go-any-api-mcp"
+
+[env.production.vars]
+GOANYAPI_API_BASE_URL = "https://api.goanyapi.com"
