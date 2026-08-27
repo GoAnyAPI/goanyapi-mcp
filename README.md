@@ -1,5 +1,7 @@
 # GoAnyAPI MCP
 
+[English](README.en.md) | 中文
+
 通过 Model Context Protocol（MCP）将 GoAnyAPI 的网站数据和搜索能力接入 AI 客户端。连接后，你可以直接用自然语言查询网站流量、域名评分、外链、SERP、Autocomplete 等数据，由 AI 根据问题选择合适的工具。
 
 ## 开始使用
@@ -148,7 +150,7 @@ claude mcp list
 查询 ai image 的 Google 和 Bing Autocomplete 建议词。
 ```
 
-MCP 会根据请求选择对应的 GoAnyAPI 工具。详细参数、返回字段和积分消耗，以 [GoAnyAPI 文档](https://goanyapi.com) 为准。
+MCP 会根据请求选择对应的 GoAnyAPI 工具。详细参数、返回字段和积分消耗，以 [GoAnyAPI 中文文档](https://goanyapi.com/zh/docs) 为准。
 
 ## 费用和数据安全
 
@@ -171,7 +173,7 @@ Authorization: Bearer <GOANYAPI_API_KEY>
 
 ### 返回积分不足
 
-请登录 [goanyapi.com](https://goanyapi.com) 查看账户余额并充值积分。
+请登录 [GoAnyAPI 计费页面](https://goanyapi.com/zh/pricing) 查看账户余额并充值积分。
 
 ### 客户端没有显示工具
 
