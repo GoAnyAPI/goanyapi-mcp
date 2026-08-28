@@ -2,81 +2,199 @@
 
 [English](README.en.md) | 中文
 
-GoAnyAPI 的远程 HTTP MCP 服务。客户端通过标准 OAuth 2.1 授权码流程连接，不需要创建、复制或保存 GoAnyAPI API Key。
+让 Codex、Claude Code（CC）、Cursor、WorkBuddy、OpenCode 和其他支持远程 HTTP MCP 的 AI 客户端直接查询 GoAnyAPI 数据。
 
-## 用户接入
+- MCP 地址：`https://mcp.goanyapi.com/mcp`
+- 使用 GoAnyAPI 账户登录授权，无需创建或复制 API Key
+- MCP 查询消耗授权账户中的 GoAnyAPI 积分
+- 普通用户无需下载本仓库、安装依赖或运行本地服务
 
-MCP 地址：
+## 快速开始
 
-```text
-https://mcp.goanyapi.com/mcp
+### 1. 在客户端中添加 GoAnyAPI MCP
+
+#### Codex CLI
+
+在终端执行：
+
+```bash
+codex mcp add goanyapi --url https://mcp.goanyapi.com/mcp
 ```
 
-在支持远程 HTTP MCP OAuth 的客户端中只配置上面的 URL。首次连接时，客户端会打开 GoAnyAPI 登录与授权页；用户使用现有邮箱或社交账号登录并同意授权后，客户端自动保存短期访问令牌和刷新令牌。
+Codex 通常会自动打开浏览器开始登录。如果没有自动打开，或之后需要重新登录，请执行：
 
-Codex 配置示例：
-
-```toml
-[mcp_servers.goanyapi]
-url = 'https://mcp.goanyapi.com/mcp'
+```bash
+codex mcp login goanyapi
 ```
 
-Claude Code 可添加远程 HTTP MCP，然后通过 `/mcp` 完成登录授权：
+可使用下面的命令确认服务已经添加：
+
+```bash
+codex mcp list
+```
+
+#### Codex 桌面端或 IDE 扩展
+
+1. 打开 **Settings → MCP servers**。
+2. 选择 **Add server**。
+3. 类型选择 **Streamable HTTP**，名称填写 `goanyapi`。
+4. URL 填写 `https://mcp.goanyapi.com/mcp`。
+5. 保存并按提示重启客户端。
+6. 在 MCP 服务列表中选择 **Authenticate** 完成登录授权。
+
+#### Claude Code（CC）
+
+在终端执行：
 
 ```bash
 claude mcp add --transport http goanyapi https://mcp.goanyapi.com/mcp
 ```
 
-OAuth 授权绑定的是 GoAnyAPI 登录账户。MCP 调用直接消耗该账户的积分，不会创建或向客户端下发隐藏 API Key。积分不足时，请在 [GoAnyAPI 价格页](https://goanyapi.com/zh/pricing) 充值。
+然后在 Claude Code 中输入 `/mcp`，选择 `goanyapi` 并完成登录授权。
 
-每个账户最多同时授权 10 个 MCP 客户端；每个授权最多保留 3 个活跃会话，单个账户最多 15 个活跃会话。用户可以在 GoAnyAPI 的“设置 → MCP 授权”中撤销客户端，撤销后其访问会立即失效。
+#### Cursor
 
-## OAuth 端点
+1. 打开 **Cursor Settings → Tools & MCP**。
+2. 选择 **New MCP Server**，添加下面的配置：
 
-- Protected Resource Metadata：`/.well-known/oauth-protected-resource/mcp`
-- Authorization Server Metadata：`https://goanyapi.com/.well-known/oauth-authorization-server`
-- 动态客户端注册：`https://goanyapi.com/api/oauth/register`
-- 授权：`https://goanyapi.com/oauth/authorize`
-- Token：`https://goanyapi.com/api/oauth/token`
-- Revocation：`https://goanyapi.com/api/oauth/revoke`
-
-当前支持授权码 + PKCE S256、刷新令牌轮换、Resource Indicators 和动态客户端注册。权限范围为 `mcp:invoke`。
-
-## 开发
-
-```bash
-pnpm install
-pnpm test
-pnpm type-check
-pnpm dev
+```json
+{
+  "mcpServers": {
+    "goanyapi": {
+      "url": "https://mcp.goanyapi.com/mcp"
+    }
+  }
+}
 ```
 
-Worker 的公开变量在 `wrangler.toml` 中配置：
+3. 保存配置，在 MCP 列表中启用 `goanyapi`。
+4. 按提示打开浏览器，登录 GoAnyAPI 并授权。
 
-- `GOANYAPI_API_BASE_URL`
-- `GOANYAPI_OAUTH_ISSUER`
-- `GOANYAPI_MCP_RESOURCE`
+#### WorkBuddy
 
-`MCP_INTERNAL_SECRET` 必须作为 Worker secret 配置，并与 GoAnyAPI 主应用中的同名 secret 完全一致：
+1. 打开 WorkBuddy 的 MCP 设置。
+2. 添加远程 MCP 服务，名称填写 `goanyapi`。
+3. 连接方式选择 **Streamable HTTP**，URL 填写 `https://mcp.goanyapi.com/mcp`。
+4. 保存后按提示完成浏览器登录授权。
 
-```bash
-wrangler secret put MCP_INTERNAL_SECRET
+#### OpenCode
+
+在 `opencode.json` 中添加：
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "goanyapi": {
+      "type": "remote",
+      "url": "https://mcp.goanyapi.com/mcp",
+      "enabled": true
+    }
+  }
+}
 ```
 
-主应用还需要配置 `MCP_OAUTH_ISSUER`、`MCP_OAUTH_RESOURCE`、`MCP_OAUTH_KEY_ID` 和 ES256 私钥 `MCP_OAUTH_PRIVATE_JWK`。可在主项目运行：
+启动 OpenCode 后按提示完成授权；如果需要手动发起登录，可执行：
 
 ```bash
-node scripts/generate-mcp-oauth-key.mjs
+opencode mcp auth goanyapi
 ```
 
-OAuth 数据库迁移为主项目的 `src/config/db/migrations/0012_add_mcp_oauth.sql`。
+#### 其他 AI 客户端
 
-## 安全说明
+添加一个远程 **Streamable HTTP** MCP 服务，并填写：
 
-- 访问令牌有效期 30 分钟，刷新令牌有效期 30 天并在每次使用后轮换。
-- MCP Worker 验证 JWT 的签名、签发者、受众和权限范围。
-- 主 API 再次验证 JWT、有效授权记录以及 MCP Worker 的内部密钥。
-- 动态注册只允许 HTTPS 回调；本机 loopback 回调允许 HTTP 和动态端口。
-- 授权码为一次性、5 分钟有效，并强制 PKCE S256。
+```text
+https://mcp.goanyapi.com/mcp
+```
 
-健康检查：`https://mcp.goanyapi.com/health`。
+客户端必须支持远程 MCP 的浏览器 OAuth 登录。
+
+### 2. 登录并授权
+
+添加 MCP 后，客户端会打开 GoAnyAPI 授权页面：
+
+1. 如果尚未登录，请使用 GoAnyAPI 邮箱账户或页面提供的社交账号登录。
+2. 确认页面中的客户端名称、权限和返回地址。
+3. 点击 **Authorize / 授权**。
+4. 浏览器返回本机 `localhost` 或 `127.0.0.1` 回调页后，等待页面显示授权完成。
+5. 看到 `Authentication complete. You may close this window.` 后即可关闭页面。
+6. Codex 终端显示 `Successfully logged in.` 即表示连接成功。
+
+授权绑定当前登录的 GoAnyAPI 账户。客户端不会获得你的 GoAnyAPI 密码或 API Key。
+
+### 3. 发起第一次查询
+
+授权完成后，直接用自然语言告诉 AI 需要查询什么，不必记住 MCP 工具名称。例如：
+
+```text
+通过 GoAnyAPI 查询 x.com 最近 3 个月的流量信息
+```
+
+```text
+通过 GoAnyAPI 查询 example.com 的 Domain Rating 和外链数据
+```
+
+```text
+查询我的 GoAnyAPI 剩余积分
+```
+
+客户端会自动选择合适的 GoAnyAPI MCP 工具。根据客户端的安全策略，首次调用时可能仍会显示 Allow / Approve 确认。
+
+## 积分与充值
+
+MCP 调用使用授权账户中的 GoAnyAPI 积分，与网站和 API 使用同一份余额。
+
+### 查看余额和记录
+
+- 直接让 AI“查询我的 GoAnyAPI 剩余积分”。
+- 打开 [积分记录](https://goanyapi.com/zh/settings/credits) 查看当前余额和变动明细。
+- 打开 [支付记录](https://goanyapi.com/zh/settings/payments) 查看历史订单。
+
+### 手动充值
+
+1. 打开 [GoAnyAPI 价格与充值页面](https://goanyapi.com/zh/pricing)。
+2. 登录与 MCP 授权相同的 GoAnyAPI 账户。
+3. 选择需要的积分套餐并完成支付。
+4. 积分到账后可继续使用 MCP，无需重新安装或重新授权。
+
+如果希望在余额较低时自动补充积分，可在 [余额守护](https://goanyapi.com/zh/settings/balance-guard) 中配置低余额提醒和自动充值。
+
+## 管理和撤销授权
+
+打开 [设置 → MCP 授权](https://goanyapi.com/zh/settings/mcp) 可以查看所有已连接的客户端及授权时间。
+
+- 不再使用某个客户端时，点击 **撤销**。
+- 撤销后，该客户端将不能继续使用 GoAnyAPI MCP。
+- 重复添加或多次授权可能产生多条同名客户端记录，可以撤销旧记录，只保留当前正在使用的一条。
+- 每个账户最多同时授权 10 个 MCP 客户端。
+
+## 常见问题
+
+### 为什么授权后会跳到 localhost 或 127.0.0.1？
+
+这是 Codex、Claude Code 等本地客户端接收授权结果的回调地址，属于正常流程。页面提示认证完成后即可关闭。
+
+### 为什么没有打开登录页面？
+
+浏览器中已经登录 GoAnyAPI 时，可能会直接进入授权确认页。如果客户端没有自动打开浏览器，请重新执行登录命令，例如：
+
+```bash
+codex mcp login goanyapi
+```
+
+### 授权成功后为什么看不到工具？
+
+先重启客户端或重新打开会话，然后检查 MCP 连接状态。Codex CLI 可以执行：
+
+```bash
+codex mcp list
+```
+
+### 提示积分不足怎么办？
+
+请确认 MCP 授权使用的是哪个 GoAnyAPI 账户，然后为同一账户[充值积分](https://goanyapi.com/zh/pricing)。充值到账后无需重新授权。
+
+### 需要创建 GoAnyAPI API Key 吗？
+
+不需要。MCP 使用浏览器登录授权，不会要求你把 API Key 粘贴到客户端。

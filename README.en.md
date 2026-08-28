@@ -2,81 +2,199 @@
 
 English | [中文](README.md)
 
-A remote HTTP MCP server for GoAnyAPI. Clients connect through a standard OAuth 2.1 authorization code flow; users do not create, copy, or store a GoAnyAPI API key.
+Use GoAnyAPI data directly from Codex, Claude Code, Cursor, WorkBuddy, OpenCode, and other AI clients that support remote HTTP MCP servers.
 
-## Connect
+- MCP URL: `https://mcp.goanyapi.com/mcp`
+- Sign in with your GoAnyAPI account; no API key needs to be created or copied
+- MCP queries consume credits from the authorized GoAnyAPI account
+- Regular users do not need to clone this repository, install dependencies, or run a local server
 
-MCP URL:
+## Quick start
 
-```text
-https://mcp.goanyapi.com/mcp
+### 1. Add GoAnyAPI MCP to your client
+
+#### Codex CLI
+
+Run:
+
+```bash
+codex mcp add goanyapi --url https://mcp.goanyapi.com/mcp
 ```
 
-Configure only this URL in a client that supports OAuth for remote HTTP MCP. On first connection, the client opens the GoAnyAPI sign-in and consent page, then stores the access and refresh tokens returned by the OAuth flow.
+Codex normally opens the browser sign-in flow automatically. If it does not, or if you need to sign in again later, run:
 
-Codex example:
-
-```toml
-[mcp_servers.goanyapi]
-url = 'https://mcp.goanyapi.com/mcp'
+```bash
+codex mcp login goanyapi
 ```
 
-Claude Code can add the remote HTTP server and complete authorization through `/mcp`:
+Confirm that the server was added with:
+
+```bash
+codex mcp list
+```
+
+#### Codex desktop app or IDE extension
+
+1. Open **Settings → MCP servers**.
+2. Select **Add server**.
+3. Choose **Streamable HTTP** and enter `goanyapi` as the name.
+4. Enter `https://mcp.goanyapi.com/mcp` as the URL.
+5. Save and restart the client when prompted.
+6. Select **Authenticate** for the GoAnyAPI server and complete authorization.
+
+#### Claude Code
+
+Run:
 
 ```bash
 claude mcp add --transport http goanyapi https://mcp.goanyapi.com/mcp
 ```
 
-The authorization is linked to the signed-in GoAnyAPI account. MCP calls consume that account's credits and no hidden API key is issued to the client. Add credits on the [GoAnyAPI pricing page](https://goanyapi.com/pricing) when needed.
+Then enter `/mcp` in Claude Code, select `goanyapi`, and complete authorization.
 
-An account can authorize up to 10 MCP clients. Each grant can keep up to 3 active sessions, with 15 active sessions per account overall. Users can revoke clients under GoAnyAPI Settings → MCP Authorizations; revoked access stops working immediately.
+#### Cursor
 
-## OAuth endpoints
+1. Open **Cursor Settings → Tools & MCP**.
+2. Select **New MCP Server** and add:
 
-- Protected Resource Metadata: `/.well-known/oauth-protected-resource/mcp`
-- Authorization Server Metadata: `https://goanyapi.com/.well-known/oauth-authorization-server`
-- Dynamic Client Registration: `https://goanyapi.com/api/oauth/register`
-- Authorization: `https://goanyapi.com/oauth/authorize`
-- Token: `https://goanyapi.com/api/oauth/token`
-- Revocation: `https://goanyapi.com/api/oauth/revoke`
-
-The server supports authorization code with PKCE S256, refresh-token rotation, Resource Indicators, and Dynamic Client Registration. The supported scope is `mcp:invoke`.
-
-## Development
-
-```bash
-pnpm install
-pnpm test
-pnpm type-check
-pnpm dev
+```json
+{
+  "mcpServers": {
+    "goanyapi": {
+      "url": "https://mcp.goanyapi.com/mcp"
+    }
+  }
+}
 ```
 
-Public Worker variables are configured in `wrangler.toml`:
+3. Save the configuration and enable `goanyapi` in the MCP list.
+4. Follow the browser prompt to sign in to GoAnyAPI and authorize access.
 
-- `GOANYAPI_API_BASE_URL`
-- `GOANYAPI_OAUTH_ISSUER`
-- `GOANYAPI_MCP_RESOURCE`
+#### WorkBuddy
 
-Set `MCP_INTERNAL_SECRET` as a Worker secret and use the exact same secret in the GoAnyAPI application:
+1. Open the MCP settings in WorkBuddy.
+2. Add a remote MCP server named `goanyapi`.
+3. Choose **Streamable HTTP** and enter `https://mcp.goanyapi.com/mcp`.
+4. Save, then complete browser-based sign-in and authorization.
 
-```bash
-wrangler secret put MCP_INTERNAL_SECRET
+#### OpenCode
+
+Add the following to `opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "goanyapi": {
+      "type": "remote",
+      "url": "https://mcp.goanyapi.com/mcp",
+      "enabled": true
+    }
+  }
+}
 ```
 
-The main application also requires `MCP_OAUTH_ISSUER`, `MCP_OAUTH_RESOURCE`, `MCP_OAUTH_KEY_ID`, and the ES256 private key in `MCP_OAUTH_PRIVATE_JWK`. Generate a key from the main repository with:
+Start OpenCode and follow the authorization prompt. To start authorization manually, run:
 
 ```bash
-node scripts/generate-mcp-oauth-key.mjs
+opencode mcp auth goanyapi
 ```
 
-The OAuth database migration is `src/config/db/migrations/0012_add_mcp_oauth.sql` in the main application.
+#### Other AI clients
 
-## Security
+Add a remote **Streamable HTTP** MCP server with this URL:
 
-- Access tokens expire after 30 minutes. Refresh tokens expire after 30 days and rotate on use.
-- The MCP Worker verifies JWT signature, issuer, audience, and scope.
-- The main API verifies the JWT again, checks that the grant is active, and authenticates the MCP Worker with a shared internal secret.
-- Dynamic registration allows HTTPS redirects and HTTP only for loopback callbacks with dynamic ports.
-- Authorization codes are single-use, expire after 5 minutes, and require PKCE S256.
+```text
+https://mcp.goanyapi.com/mcp
+```
 
-Health check: `https://mcp.goanyapi.com/health`.
+The client must support browser-based OAuth for remote MCP servers.
+
+### 2. Sign in and authorize
+
+After you add the server, your client opens the GoAnyAPI authorization page:
+
+1. If necessary, sign in with your GoAnyAPI email account or one of the social sign-in options shown on the page.
+2. Review the client name, requested permission, and return address.
+3. Select **Authorize**.
+4. Wait for the browser to return to a local `localhost` or `127.0.0.1` callback page.
+5. When the page says `Authentication complete. You may close this window.`, close it.
+6. In Codex, `Successfully logged in.` confirms that the connection is ready.
+
+Authorization is linked to the GoAnyAPI account currently signed in. The client does not receive your GoAnyAPI password or API key.
+
+### 3. Run your first query
+
+After authorization, ask the AI for the data you need in natural language. You do not need to remember MCP tool names. For example:
+
+```text
+Use GoAnyAPI to query the last 3 months of traffic data for x.com.
+```
+
+```text
+Use GoAnyAPI to query the Domain Rating and backlink data for example.com.
+```
+
+```text
+Check my remaining GoAnyAPI credits.
+```
+
+The client selects the appropriate GoAnyAPI MCP tool automatically. Depending on the client's security policy, the first call may still show an Allow or Approve confirmation.
+
+## Credits and top-ups
+
+MCP calls use the same GoAnyAPI credit balance as the website and API.
+
+### Check your balance and history
+
+- Ask the AI to check your remaining GoAnyAPI credits.
+- Open [Credits](https://goanyapi.com/settings/credits) to view your balance and credit history.
+- Open [Payments](https://goanyapi.com/settings/payments) to review past orders.
+
+### Add credits manually
+
+1. Open the [GoAnyAPI pricing and top-up page](https://goanyapi.com/pricing).
+2. Sign in to the same GoAnyAPI account used for MCP authorization.
+3. Select a credit pack and complete payment.
+4. Continue using MCP after the credits arrive; reinstalling or reauthorizing is not required.
+
+To replenish credits when the balance is low, configure low-balance alerts and automatic top-ups under [Balance Guard](https://goanyapi.com/settings/balance-guard).
+
+## Manage or revoke authorization
+
+Open [Settings → MCP Authorizations](https://goanyapi.com/settings/mcp) to see connected clients and their authorization times.
+
+- Select **Revoke** when you no longer use a client.
+- A revoked client can no longer call GoAnyAPI MCP tools.
+- Adding or authorizing a client repeatedly may create multiple entries with the same name. Revoke older entries and keep the one currently in use.
+- Each account can authorize up to 10 MCP clients at the same time.
+
+## Troubleshooting
+
+### Why does authorization return to localhost or 127.0.0.1?
+
+Codex, Claude Code, and similar local clients use a local callback address to receive the authorization result. You can close the page after it confirms that authentication is complete.
+
+### Why did the sign-in page not open?
+
+If the browser is already signed in to GoAnyAPI, it may go directly to the authorization page. If the client did not open a browser, start the flow again. For Codex:
+
+```bash
+codex mcp login goanyapi
+```
+
+### Why are the tools unavailable after successful authorization?
+
+Restart the client or open a new session, then check the MCP connection. With Codex CLI, run:
+
+```bash
+codex mcp list
+```
+
+### What should I do when credits are insufficient?
+
+Confirm which GoAnyAPI account was used for authorization, then [add credits](https://goanyapi.com/pricing) to that same account. Reauthorization is not required after the credits arrive.
+
+### Do I need a GoAnyAPI API key?
+
+No. MCP uses browser-based account authorization and does not require you to paste an API key into the client.
