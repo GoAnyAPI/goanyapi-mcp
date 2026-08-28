@@ -10,7 +10,8 @@ export async function callGoAnyApi(
   baseUrl: string,
   path: string,
   args: Record<string, unknown>,
-  authorization: string
+  accessToken: string,
+  internalSecret: string
 ) {
   const url = new URL(`${baseUrl.replace(/\/$/, '')}${path}`);
   for (const [key, value] of Object.entries(args)) {
@@ -23,7 +24,11 @@ export async function callGoAnyApi(
   try {
     const response = await fetch(url, {
       method: 'GET',
-      headers: { accept: 'application/json', authorization },
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${accessToken}`,
+        'x-goanyapi-mcp-secret': internalSecret,
+      },
       signal: controller.signal,
     });
     const text = await response.text();

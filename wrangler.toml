@@ -3,16 +3,24 @@ main = "src/index.ts"
 compatibility_date = "2026-08-26"
 
 [vars]
+GOANYAPI_OAUTH_ISSUER = 'http://localhost:3000'
+GOANYAPI_MCP_RESOURCE = 'http://localhost:8787/mcp'
 GOANYAPI_API_BASE_URL = "https://api.goanyapi.com"
 
 [env.dev]
+routes = [{ pattern = 'mcp-dev.goanyapi.com', custom_domain = true }]
 name = "go-any-api-mcp-dev"
 
 [env.dev.vars]
+GOANYAPI_OAUTH_ISSUER = 'https://www2.goanyapi.com'
+GOANYAPI_MCP_RESOURCE = 'https://mcp-dev.goanyapi.com/mcp'
 GOANYAPI_API_BASE_URL = "https://api2.goanyapi.com"
 
 [env.production]
+routes = [{ pattern = 'mcp.goanyapi.com', custom_domain = true }]
 name = "go-any-api-mcp"
 
 [env.production.vars]
+GOANYAPI_OAUTH_ISSUER = 'https://goanyapi.com'
+GOANYAPI_MCP_RESOURCE = 'https://mcp.goanyapi.com/mcp'
 GOANYAPI_API_BASE_URL = "https://api.goanyapi.com"

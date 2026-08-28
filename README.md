@@ -2,232 +2,81 @@
 
 [English](README.en.md) | 中文
 
-通过 Model Context Protocol（MCP）将 GoAnyAPI 的网站数据和搜索能力接入 AI 客户端。连接后，你可以直接用自然语言查询网站流量、域名评分、外链、SERP、Autocomplete 等数据，由 AI 根据问题选择合适的工具。
+GoAnyAPI 的远程 HTTP MCP 服务。客户端通过标准 OAuth 2.1 授权码流程连接，不需要创建、复制或保存 GoAnyAPI API Key。
 
-## 开始使用
+## 用户接入
 
-### 1. 获取 API Key
-
-1. 登录 [goanyapi.com](https://goanyapi.com)。
-2. 在控制台的 API Key 页面创建并复制 API Key。
-3. 确保账户有可用积分。
-
-API Key 只应保存在自己的环境变量或客户端密钥管理中，不要提交到代码仓库、截图或公开配置文件。
-
-### 2. 设置 API Key
-
-macOS / Linux：
-
-```bash
-export GOANYAPI_API_KEY="你的 GoAnyAPI API Key"
-```
-
-Windows PowerShell：
-
-```powershell
-$env:GOANYAPI_API_KEY="你的 GoAnyAPI API Key"
-```
-
-上面的写法只对当前 PowerShell 窗口生效。若希望 Windows 用户环境变量持久生效，可以使用：
-
-```powershell
-[Environment]::SetEnvironmentVariable("GOANYAPI_API_KEY", "你的 GoAnyAPI API Key", "User")
-```
-
-设置持久环境变量后，需要重新打开终端并重启 Codex、Claude Code 或 Cursor，已经运行的客户端不会自动读取新的环境变量。
-
-如果 AI 客户端具备终端操作权限，也可以通过对话设置 API Key 环境变量。例如：
-
-```text
-请将我提供的 GoAnyAPI API Key 设置为当前 Windows 用户的持久环境变量 GOANYAPI_API_KEY。
-请不要在回复中回显 API Key，也不要把它写入项目文件、MCP 配置文件或 Git 仓库。
-设置完成后，仅验证环境变量已存在，然后帮我检查 goanyapi MCP 配置。
-```
-
-API Key 应通过客户端的安全输入或本机密钥管理器提供，不要直接粘贴到公开对话中。对话式配置需要用户授权终端和环境变量操作。
-
-### 3. MCP 服务地址
-
-正式 MCP 服务地址：
+MCP 地址：
 
 ```text
 https://mcp.goanyapi.com/mcp
 ```
 
-服务使用 Bearer Token 认证，客户端需要发送：
+在支持远程 HTTP MCP OAuth 的客户端中只配置上面的 URL。首次连接时，客户端会打开 GoAnyAPI 登录与授权页；用户使用现有邮箱或社交账号登录并同意授权后，客户端自动保存短期访问令牌和刷新令牌。
 
-```http
-Authorization: Bearer <GOANYAPI_API_KEY>
-```
-
-## 接入 AI 客户端
-
-### 通过对话配置
-
-如果 AI 客户端具备终端和配置文件操作权限，可以通过对话完成 MCP 接入，不限于 Codex。例如，在支持对话式操作的 AI 客户端中发送：
-
-```text
-请帮我接入 GoAnyAPI MCP。
-服务地址：https://mcp.goanyapi.com/mcp
-认证方式：从环境变量 GOANYAPI_API_KEY 读取 Bearer Token。
-请根据当前 AI 客户端的 MCP 配置格式完成配置，验证 goanyapi 已启用，并且不要把真实 API Key 写入配置文件。
-```
-
-对话式配置需要用户授权终端和配置文件操作。配置完成后重新打开终端并重启客户端，再发送自然语言请求即可。
-
-### Codex
-
-在 `~/.codex/config.toml` 中加入：
+Codex 配置示例：
 
 ```toml
 [mcp_servers.goanyapi]
-url = "https://mcp.goanyapi.com/mcp"
-bearer_token_env_var = "GOANYAPI_API_KEY"
+url = 'https://mcp.goanyapi.com/mcp'
 ```
 
-重启 Codex 后即可使用。Codex 会从 `GOANYAPI_API_KEY` 环境变量读取密钥，并自动添加认证请求头。
-
-### Claude Code（cc）
-
-在项目根目录创建 `.mcp.json`：
-
-```json
-{
-  "mcpServers": {
-    "goanyapi": {
-      "type": "http",
-      "url": "https://mcp.goanyapi.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${GOANYAPI_API_KEY}"
-      }
-    }
-  }
-}
-```
-
-启动 Claude Code 后，可以执行 `/mcp` 查看连接状态，也可以使用：
+Claude Code 可添加远程 HTTP MCP，然后通过 `/mcp` 完成登录授权：
 
 ```bash
-claude mcp list
+claude mcp add --transport http goanyapi https://mcp.goanyapi.com/mcp
 ```
 
-### Cursor
+OAuth 授权绑定的是 GoAnyAPI 登录账户。MCP 调用直接消耗该账户的积分，不会创建或向客户端下发隐藏 API Key。积分不足时，请在 [GoAnyAPI 价格页](https://goanyapi.com/zh/pricing) 充值。
 
-将下面的配置写入项目级 `.cursor/mcp.json`，或 Cursor 的全局 MCP 配置文件：
+每个账户最多同时授权 10 个 MCP 客户端；每个授权最多保留 3 个活跃会话，单个账户最多 15 个活跃会话。用户可以在 GoAnyAPI 的“设置 → MCP 授权”中撤销客户端，撤销后其访问会立即失效。
 
-```json
-{
-  "mcpServers": {
-    "goanyapi": {
-      "url": "https://mcp.goanyapi.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${env:GOANYAPI_API_KEY}"
-      }
-    }
-  }
-}
+## OAuth 端点
+
+- Protected Resource Metadata：`/.well-known/oauth-protected-resource/mcp`
+- Authorization Server Metadata：`https://goanyapi.com/.well-known/oauth-authorization-server`
+- 动态客户端注册：`https://goanyapi.com/api/oauth/register`
+- 授权：`https://goanyapi.com/oauth/authorize`
+- Token：`https://goanyapi.com/api/oauth/token`
+- Revocation：`https://goanyapi.com/api/oauth/revoke`
+
+当前支持授权码 + PKCE S256、刷新令牌轮换、Resource Indicators 和动态客户端注册。权限范围为 `mcp:invoke`。
+
+## 开发
+
+```bash
+pnpm install
+pnpm test
+pnpm type-check
+pnpm dev
 ```
 
-保存后重载 Cursor。Cursor 会从 `GOANYAPI_API_KEY` 环境变量读取密钥。
+Worker 的公开变量在 `wrangler.toml` 中配置：
 
-## 可以这样使用
+- `GOANYAPI_API_BASE_URL`
+- `GOANYAPI_OAUTH_ISSUER`
+- `GOANYAPI_MCP_RESOURCE`
 
-连接成功后，直接向 AI 提出问题即可，例如：
+`MCP_INTERNAL_SECRET` 必须作为 Worker secret 配置，并与 GoAnyAPI 主应用中的同名 secret 完全一致：
 
-```text
-查询 github.com 的网站流量和主要流量来源。
+```bash
+wrangler secret put MCP_INTERNAL_SECRET
 ```
 
-```text
-查询 github.com 的域名评分和外链数据。
+主应用还需要配置 `MCP_OAUTH_ISSUER`、`MCP_OAUTH_RESOURCE`、`MCP_OAUTH_KEY_ID` 和 ES256 私钥 `MCP_OAUTH_PRIVATE_JWK`。可在主项目运行：
+
+```bash
+node scripts/generate-mcp-oauth-key.mjs
 ```
 
-```text
-使用 Bing SERP API 搜索 ai image，返回广告、自然结果和分页信息。
-```
+OAuth 数据库迁移为主项目的 `src/config/db/migrations/0012_add_mcp_oauth.sql`。
 
-```text
-查询 ai image 的 Google 和 Bing Autocomplete 建议词。
-```
+## 安全说明
 
-MCP 会根据请求选择对应的 GoAnyAPI 工具。详细参数、返回字段和积分消耗，以 [GoAnyAPI 中文文档](https://goanyapi.com/zh/docs) 为准。
+- 访问令牌有效期 30 分钟，刷新令牌有效期 30 天并在每次使用后轮换。
+- MCP Worker 验证 JWT 的签名、签发者、受众和权限范围。
+- 主 API 再次验证 JWT、有效授权记录以及 MCP Worker 的内部密钥。
+- 动态注册只允许 HTTPS 回调；本机 loopback 回调允许 HTTP 和动态端口。
+- 授权码为一次性、5 分钟有效，并强制 PKCE S256。
 
-## 费用和数据安全
-
-- 每次调用会按照对应 API 的规则消耗账户积分。
-- API Key 代表你的 GoAnyAPI 账户权限，请勿与他人共享。
-- 不要把真实 API Key 写入 Git 仓库、项目提交记录或公开截图。
-- 如果不再使用某个客户端，建议删除其中的 MCP 配置并轮换 API Key。
-
-## 常见问题
-
-### 返回 401 或提示未授权
-
-确认 API Key 有效，并检查客户端是否正确发送了：
-
-```http
-Authorization: Bearer <GOANYAPI_API_KEY>
-```
-
-同时确认客户端启动前已经设置 `GOANYAPI_API_KEY` 环境变量。
-
-### 返回积分不足
-
-请登录 [GoAnyAPI 计费页面](https://goanyapi.com/zh/pricing) 查看账户余额并充值积分。
-
-### 客户端没有显示工具
-
-确认 MCP 地址完整填写为：
-
-```text
-https://mcp.goanyapi.com/mcp
-```
-
-然后重启或重新加载对应客户端，并检查 MCP 连接状态。
-
-### 如何确认服务可访问
-
-可以在浏览器或命令行访问健康检查地址：
-
-```text
-https://mcp.goanyapi.com/health
-```
-
-健康检查只用于确认服务在线，调用具体工具仍然需要有效的 API Key。
-
-### Windows 沙箱阻止网络请求
-
-如果手动测试时看到类似下面的错误：
-
-```text
-curl: (7) Failed to connect to mcp.goanyapi.com port 443
-```
-
-这通常表示当前终端或 AI 客户端的沙箱禁止出站网络访问，不代表 MCP 地址或 API Key 配置错误。先重启客户端，让客户端的 MCP 管理器重新加载配置；如果仍然失败，请检查代理、防火墙或企业网络是否允许访问：
-
-```text
-mcp.goanyapi.com:443
-```
-
-不要为了测试而关闭全部沙箱限制。可以使用客户端提供的网络白名单或受控网络权限，仅允许访问所需域名。
-
-### PowerShell 弹出网页脚本安全提示
-
-Windows PowerShell 5.1 使用 `Invoke-WebRequest` 请求 MCP 时，可能弹出提示，要求确认网页脚本执行。这是 PowerShell 网页解析器的提示，不是 GoAnyAPI 的 MCP 错误。手动测试时可以使用：
-
-```powershell
-Invoke-WebRequest -UseBasicParsing ...
-```
-
-或者改用 `Invoke-RestMethod` / `curl.exe`，避免使用网页脚本解析器。MCP 返回 JSON 时，推荐使用 `Invoke-RestMethod`。
-
-### 配置变更后是否需要重启客户端
-
-修改 MCP 配置文件或环境变量后，客户端需要重新加载配置。部分客户端支持重新连接或热加载，但为了确保 MCP 服务和 API Key 都已生效，通常建议完全退出后重新打开客户端：
-
-- Codex：重启 Codex。
-- Claude Code：启动新的会话，并使用 `/mcp` 检查连接状态。
-- Cursor：重新加载窗口或重启 Cursor。
-- 其他 AI 客户端：优先使用客户端提供的 Reload、Reconnect 或 Restart 功能。
-
-如果客户端仍然没有显示工具，请确认 MCP 地址、环境变量和认证配置无误后，再重新加载或重启客户端。
+健康检查：`https://mcp.goanyapi.com/health`。

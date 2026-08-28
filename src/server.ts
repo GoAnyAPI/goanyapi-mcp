@@ -6,10 +6,12 @@ import { jsonSchemaToZodShape } from './schema.js';
 
 export async function createMcpServer({
   baseUrl,
-  authorization,
+  accessToken,
+  internalSecret,
 }: {
   baseUrl: string;
-  authorization: string;
+  accessToken: string;
+  internalSecret: string;
 }) {
   const server = new McpServer({ name: 'goanyapi', version: '0.1.0' });
   const apiCatalog = await loadApiCatalog(baseUrl);
@@ -20,12 +22,23 @@ export async function createMcpServer({
       {
         description: definition.description,
         inputSchema: jsonSchemaToZodShape(definition.inputSchema),
+        annotations: {
+          readOnlyHint: definition.readOnly,
+          destructiveHint: false,
+          idempotentHint: false,
+          openWorldHint: true,
+        },
       },
       async (args: Record<string, unknown>, _extra: unknown) => {
-        if (!authorization) return toToolError(new Error('Authorization is required.'));
         try {
           return toToolResult(
-            await callGoAnyApi(baseUrl, definition.path, args, authorization)
+            await callGoAnyApi(
+              baseUrl,
+              definition.path,
+              args,
+              accessToken,
+              internalSecret
+            )
           );
         } catch (error) {
           return toToolError(error);
