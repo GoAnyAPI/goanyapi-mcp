@@ -7,7 +7,8 @@
     "url": "https://github.com/GoAnyAPI/goanyapi-mcp",
     "source": "github"
   },
-  "version": "0.1.0",
+  "websiteUrl": "https://goanyapi.com",
+  "version": "0.1.1",
   "remotes": [
     {
       "type": "streamable-http",
