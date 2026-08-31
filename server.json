@@ -2,13 +2,13 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.goanyapi/goanyapi-mcp",
   "title": "GoAnyAPI MCP",
-  "description": "GoAnyAPI SEO MCP: traffic, DR, backlinks, keywords, Google/Bing SERP, autocomplete, Google Ads data.",
+  "description": "GoAnyAPI SEO MCP: traffic, DR, backlinks, keywords, Google/Bing SERP/autocomplete, Ads Transparency.",
   "repository": {
     "url": "https://github.com/GoAnyAPI/goanyapi-mcp",
     "source": "github"
   },
   "websiteUrl": "https://goanyapi.com",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "remotes": [
     {
       "type": "streamable-http",
