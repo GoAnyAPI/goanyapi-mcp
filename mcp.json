@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "goanyapi": {
+      "url": "https://mcp.goanyapi.com/mcp"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "goanyapi",
+  "displayName": "GoAnyAPI",
+  "version": "0.1.0",
+  "description": "Connect Cursor Agent to GoAnyAPI's remote MCP server for search, SEO, website traffic, backlinks, keyword research, advertising transparency, and other web data through OAuth.",
+  "author": {
+    "name": "CHATHUB LLC",
+    "email": "support@goanyapi.com"
+  },
+  "keywords": ["mcp", "search", "seo", "traffic", "backlinks", "advertising"],
+  "logo": "assets/marketplace-logo.png"
+}
