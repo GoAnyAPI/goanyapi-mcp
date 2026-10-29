@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "goanyapi": {
+      "url": "https://mcp.goanyapi.com/mcp",
+      "transport": "streamable-http",
+      "auth": "oauth",
+      "oauth": {
+        "scope": "mcp:invoke"
+      }
+    }
+  }
+}

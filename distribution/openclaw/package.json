@@ -1,0 +1,11 @@
+{
+  "name": "@goanyapi/goanyapi-mcp",
+  "version": "0.1.0",
+  "description": "GoAnyAPI remote MCP integration for OpenClaw",
+  "homepage": "https://goanyapi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GoAnyAPI/goanyapi-mcp",
+    "directory": "distribution/openclaw"
+  }
+}

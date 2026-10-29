@@ -1,0 +1,12 @@
+{
+  "name": "goanyapi",
+  "displayName": "GoAnyAPI MCP",
+  "version": "0.1.0",
+  "description": "Connect OpenClaw agents to GoAnyAPI's remote MCP server for web search, SEO, website traffic, backlinks, keywords, and advertising data via OAuth.",
+  "author": {
+    "name": "CHATHUB LLC",
+    "email": "support@goanyapi.com"
+  },
+  "keywords": ["mcp", "search", "seo", "traffic", "backlinks", "ads"],
+  "logo": "assets/icon.png"
+}
