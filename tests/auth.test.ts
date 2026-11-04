@@ -57,3 +57,17 @@ test('serves discovery metadata and challenges unauthenticated MCP requests', as
   assert.equal(response.status, 401);
   assert.match(response.headers.get('www-authenticate') || '', /resource_metadata=/);
 });
+
+test('serves the OpenAI domain challenge only when configured', async () => {
+  const request = new Request('https://mcp.goanyapi.com/.well-known/openai-apps-challenge');
+  const missing = await worker.fetch(request, env);
+  assert.equal(missing.status, 404);
+
+  const configured = await worker.fetch(request, {
+    ...env,
+    OPENAI_APPS_CHALLENGE_TOKEN: 'test-challenge-token',
+  });
+  assert.equal(configured.status, 200);
+  assert.equal(await configured.text(), 'test-challenge-token');
+  assert.match(configured.headers.get('content-type') || '', /^text\/plain/);
+});

@@ -11,6 +11,7 @@ export interface Env {
   GOANYAPI_OAUTH_ISSUER?: string;
   GOANYAPI_MCP_RESOURCE?: string;
   MCP_INTERNAL_SECRET?: string;
+  OPENAI_APPS_CHALLENGE_TOKEN?: string;
 }
 
 function corsHeaders(request: Request) {
@@ -82,6 +83,17 @@ async function handleMcp(request: Request, env: Env) {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === '/.well-known/openai-apps-challenge') {
+      if (!env.OPENAI_APPS_CHALLENGE_TOKEN) {
+        return new Response('Not found', { status: 404 });
+      }
+      return new Response(env.OPENAI_APPS_CHALLENGE_TOKEN, {
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+          'cache-control': 'no-store',
+        },
+      });
+    }
     if (url.pathname === '/health') {
       return Response.json({ ok: true, oauthConfigured: Boolean(env.MCP_INTERNAL_SECRET) });
     }
