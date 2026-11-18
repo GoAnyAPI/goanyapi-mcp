@@ -1,6 +1,6 @@
 {
   "name": "go-any-api-mcp",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "packageManager": "pnpm@10.12.1",
   "private": true,
   "description": "GoAnyAPI MCP server",

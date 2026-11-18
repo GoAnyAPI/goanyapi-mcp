@@ -46,18 +46,23 @@ function isJsonSchema(value: unknown): value is JsonSchema {
   return true;
 }
 
+// 分别校验静态路径段和完整占位符，支持 jobId，拒绝畸形花括号与路径穿越。
+function isPublicPath(path: string): boolean {
+  return /^\/api\/v1\/(?:[a-z0-9_-]+|\{[A-Za-z][A-Za-z0-9_]*\})(?:\/(?:[a-z0-9_-]+|\{[A-Za-z][A-Za-z0-9_]*\}))*$/.test(path);
+}
+
 function isPublicDefinition(value: unknown): value is PublicApiDefinition {
   if (!isRecord(value)) return false;
   return (
-    value.method === 'GET' &&
+    (value.method === 'GET' || value.method === 'POST') &&
     typeof value.id === 'string' &&
     typeof value.path === 'string' &&
-    /^\/api\/v1\/[a-z0-9/_-]+$/.test(value.path) &&
+    (isPublicPath(value.path) || value.path === "/api/taaft-tools") &&
     typeof value.mcpName === 'string' &&
     /^goanyapi_[a-z0-9_]+$/.test(value.mcpName) &&
     typeof value.description === 'string' &&
-    value.readOnly === true &&
-    isJsonSchema(value.inputSchema)
+    typeof value.readOnly === 'boolean' &&
+    isJsonSchema(value.inputSchema) && value.inputSchema.type === 'object'
   );
 }
 
@@ -72,6 +77,9 @@ function parseCatalog(value: unknown): readonly PublicApiDefinition[] {
   const catalog = data.apis.filter(isPublicDefinition);
   if (catalog.length !== data.apis.length || catalog.length === 0) {
     throw new Error('Catalog response contains an invalid API definition.');
+  }
+  if (new Set(catalog.map(item => item.mcpName)).size !== catalog.length) {
+    throw new Error('Catalog response contains duplicate MCP tool names.');
   }
   return catalog;
 }
@@ -108,8 +116,14 @@ export async function loadApiCatalog(
     });
     return catalog;
   } catch (error) {
-    console.warn('Unable to load the remote GoAnyAPI catalog; using the bundled fallback.', error);
-    return fallbackCatalog;
+    // 刷新失败保留最近一次有效契约，避免工具列表缩回内置旧版本。
+    const catalog = cached?.catalog ?? fallbackCatalog;
+    console.warn('MCP Catalog refresh failed', {
+      source: cached ? 'last-known-good' : 'bundled-fallback',
+      toolCount: catalog.length,
+      reason: error instanceof Error ? error.name : 'UnknownError',
+    });
+    return catalog;
   }
 }
 

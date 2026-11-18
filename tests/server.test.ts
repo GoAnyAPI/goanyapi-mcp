@@ -5,15 +5,23 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { clearCatalogCache, fallbackCatalog } from '../src/catalog.js';
 import { createMcpServer } from '../src/server.js';
 
-test('publishes public API tools as read-only and non-destructive', async () => {
+test('publishes public API tools with catalog annotations', async () => {
   const originalFetch = globalThis.fetch;
   clearCatalogCache();
+  const definition = {
+    ...fallbackCatalog[0]!,
+    inputSchema: {
+      type: 'object',
+      properties: { year: { type: 'integer', minimum: 1000, maximum: 2026 }, month: { type: 'integer', minimum: 1, maximum: 12 } },
+      oneOf: [{ required: ['year'], not: { required: ['month'] } }, { required: ['year', 'month'] }],
+    },
+  };
   globalThis.fetch = async () =>
     new Response(
       JSON.stringify({
         code: 'ok',
         message: 'ok',
-        data: { schemaVersion: 1, apis: [fallbackCatalog[0]] },
+        data: { schemaVersion: 1, apis: [definition] },
       }),
       { status: 200, headers: { 'content-type': 'application/json' } }
     );
@@ -32,8 +40,9 @@ test('publishes public API tools as read-only and non-destructive', async () => 
 
     const { tools } = await client.listTools();
     assert.equal(tools.length, 1);
+    assert.deepEqual(tools[0]?.inputSchema, definition.inputSchema);
     assert.deepEqual(tools[0]?.annotations, {
-      readOnlyHint: true,
+      readOnlyHint: fallbackCatalog[0]?.readOnly,
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,

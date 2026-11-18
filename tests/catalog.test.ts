@@ -1,12 +1,13 @@
-import assert from 'node:assert/strict';
+﻿import assert from 'node:assert/strict';
 import test from 'node:test';
 import { clearCatalogCache, fallbackCatalog, loadApiCatalog } from '../src/catalog.js';
 
-test('catalog contains only public read-only tools', () => {
-  assert.equal(fallbackCatalog.length, 17);
+test('catalog contains public tools with accurate annotations', () => {
+  assert.ok(fallbackCatalog.some(item => item.mcpName === 'goanyapi_domain_age'));
   assert.equal(new Set(fallbackCatalog.map((item) => item.mcpName)).size, fallbackCatalog.length);
-  assert.ok(fallbackCatalog.every((item) => item.readOnly));
-  assert.ok(fallbackCatalog.every((item) => item.path.startsWith('/api/v1/')));
+  assert.ok(fallbackCatalog.some(item => item.method === 'POST' && !item.readOnly));
+  assert.ok(fallbackCatalog.every(item => item.method === 'GET' || item.method === 'POST'));
+  assert.ok(fallbackCatalog.every((item) => item.path.startsWith('/api/v1/') || String(item.path) === '/api/taaft-tools'));
 });
 
 test('loads the catalog from the GoAnyAPI endpoint', async () => {
@@ -25,7 +26,7 @@ test('loads the catalog from the GoAnyAPI endpoint', async () => {
   try {
     const catalog = await loadApiCatalog('https://api.goanyapi.com');
     assert.equal(catalog.length, 1);
-    assert.equal(catalog[0]?.path, '/api/v1/traffic');
+    assert.equal(catalog[0]?.path, fallbackCatalog[0]?.path);
   } finally {
     globalThis.fetch = originalFetch;
     clearCatalogCache();

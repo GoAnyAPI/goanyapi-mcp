@@ -1,9 +1,23 @@
+import {socialApiCatalog} from './social-api-catalog.js';
+import {tiktokSyncCatalog} from './tiktok-sync-catalog.js';
+import { tiktokCommentsCatalog } from './tiktok-comments-catalog.js';
+import { domainAgeCatalog } from './domain-age-catalog.js';
+import { googleAiOverviewCatalog } from './google-ai-overview-catalog.js';
+import { googleAiModeCatalog } from './google-ai-mode-catalog.js';
+import { geminiScraperCatalog } from './gemini-scraper-catalog.js';
+import { chatgptScraperCatalog } from './chatgpt-scraper-catalog.js';
+import { chatgptPluginDirectoryCatalog } from './chatgpt-plugin-directory-catalog.js';
+import { googleScholarCatalog } from './google-scholar-catalog.js';
+import { bingSerpCatalog } from './bing-serp-catalog.js';
+import { googleSerpCatalog } from './google-serp-catalog.js';
 /**
- * GoAnyAPI 公开 API 的机器可读目录。
- * 这里只放公开契约，不包含凭证、数据库、内部配置或服务端实现。
+ * Machine-readable public GoAnyAPI catalog.
+ * Contains public contracts only; credentials and internal configuration are excluded.
  */
 
 export type JsonSchema = {
+  minItems?: number;
+  maxItems?: number;
   type: 'object' | 'string' | 'integer' | 'number' | 'boolean' | 'array';
   title?: string;
   description?: string;
@@ -13,9 +27,49 @@ export type JsonSchema = {
   items?: JsonSchema;
   default?: string | number | boolean;
   additionalProperties?: boolean;
+  minimum?: number;
+  maximum?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  examples?: unknown[];
+  oneOf?: JsonSchema[];
+  anyOf?: JsonSchema[];
+  not?: JsonSchema;
 };
 
 export type PublicApiId =
+  | 'instagram-post'
+  | 'instagram-profile'
+  | 'instagram-highlights'
+  | 'instagram-reels'
+  | 'instagram-hashtag'
+  | 'twitter-tweet'
+  | 'twitter-profile'
+  | 'twitter-trending'
+  | 'twitter-trending-search'
+  | 'twitter-trends'
+  | 'tiktok-video-detail'
+  | 'tiktok-user-profile'
+  | 'tiktok-user-posts'
+  | 'tiktok-hashtag-detail'
+  | 'tiktok-hashtag-posts'
+  | 'tiktok-explore'
+  | 'tiktok-feed'
+  | 'tiktok-comments-submit'
+  | 'tiktok-comments-task'
+  | 'tiktok-comments-resume'
+  | 'domain-age'
+  | 'google-ai-overview'
+  | 'google-ai-mode'
+  | 'gemini-scraper-submit'
+  | 'gemini-scraper-task'
+  | 'chatgpt-scraper-submit'
+  | 'chatgpt-scraper-task'
+  | 'chatgpt-plugin-directory-categories'
+  | 'chatgpt-plugin-directory-developers'
+  | 'chatgpt-plugin-directory-plugins'
+  | 'chatgpt-plugin-directory-developer-plugins'
   | 'traffic'
   | 'dr'
   | 'backlink'
@@ -24,15 +78,21 @@ export type PublicApiId =
   | 'google-autocomplete'
   | 'bing-autocomplete'
   | 'top10-serp'
+  | 'serp-stable'
+  | 'serp-standard'
   | 'serp'
   | 'bing-serp'
+  | 'google-scholar'
   | 'google-intitle'
   | 'google-site-search'
   | 'adsense'
   | 'transparency'
   | 'ads-statistics'
   | 'activity-credits'
-  | 'credits-balance';
+  | 'credits-balance'
+  | 'chrome-reviews-create'
+  | 'chrome-reviews-read'
+  | 'chrome-web-store-reviews';
 
 export interface PublicApiDefinition {
   readonly id: PublicApiId;
@@ -41,7 +101,7 @@ export interface PublicApiDefinition {
   readonly inputSchema: JsonSchema;
   readonly mcpName: `goanyapi_${string}`;
   readonly description: string;
-  readonly readOnly: true;
+  readonly readOnly: boolean;
   readonly docsPath?: `/docs/${string}`;
 }
 
@@ -64,7 +124,23 @@ const domainSchema = stringSchema('Domain name, for example example.com');
 const keywordSchema = stringSchema('Search keyword');
 const countrySchema = stringSchema('Two-letter country code, for example us');
 
+
+const chromeDefinitions: readonly PublicApiDefinition[] = [
+  { id: 'chrome-web-store-reviews', method: 'GET', path: '/api/v1/chrome-web-store-reviews', mcpName: 'goanyapi_chrome_web_store_reviews', readOnly: true, docsPath: '/docs/chrome-web-store-reviews-api', description: 'Fetch Chrome Web Store reviews with cursor pagination. Non-empty responses cost 1 credit; empty responses are free.', inputSchema: objectSchema({ extensionId: { type: 'string', minLength: 32, maxLength: 2048, description: 'A 32-character extension ID or Chrome Web Store detail/reviews URL.' }, cursor: { type: 'string', maxLength: 4096, description: 'Opaque UTF-8 cursor returned by the previous response.' } }, ['extensionId']) },
+];
+
 const definitions: readonly PublicApiDefinition[] = [
+  ...socialApiCatalog,
+  ...tiktokSyncCatalog,
+  ...tiktokCommentsCatalog,
+  ...domainAgeCatalog,
+  ...googleAiOverviewCatalog,
+  ...googleAiModeCatalog,
+  ...geminiScraperCatalog,
+  ...chatgptScraperCatalog,
+  ...chatgptPluginDirectoryCatalog,
+  googleScholarCatalog,
+  ...chromeDefinitions,
   {
     id: 'traffic',
     method: 'GET',
@@ -178,48 +254,8 @@ const definitions: readonly PublicApiDefinition[] = [
     readOnly: true,
     docsPath: '/docs/top10-serp-api',
   },
-  {
-    id: 'serp',
-    method: 'GET',
-    path: '/api/v1/serp',
-    inputSchema: objectSchema(
-      {
-        q: keywordSchema,
-        gl: countrySchema,
-        hl: stringSchema('Optional two-letter language code'),
-        start: { type: 'integer', description: 'Result offset' },
-        device: stringSchema('Optional desktop or mobile device'),
-        browser: stringSchema('Optional browser name'),
-        safe: stringSchema('Optional safe-search mode'),
-        search_type: stringSchema('Optional search vertical'),
-      },
-      ['q']
-    ),
-    mcpName: 'goanyapi_google_serp',
-    description: 'Query structured Google search results.',
-    readOnly: true,
-    docsPath: '/docs/serp-api',
-  },
-  {
-    id: 'bing-serp',
-    method: 'GET',
-    path: '/api/v1/bing-serp',
-    inputSchema: objectSchema(
-      {
-        q: keywordSchema,
-        cc: stringSchema('Optional lowercase two-letter country code'),
-        setLang: stringSchema('Optional language-country code such as en-US'),
-        first: { type: 'integer', description: 'Pagination start from the previous response' },
-        device: stringSchema('Optional desktop, mobile, ios, ipad, android, or tablet device'),
-        brd_browser: stringSchema('Optional chrome, safari, or firefox browser'),
-      },
-      ['q']
-    ),
-    mcpName: 'goanyapi_bing_serp',
-    description: 'Query structured Bing search results with pagination and localization options.',
-    readOnly: true,
-    docsPath: '/docs/bing-serp-api',
-  },
+  ...JSON.parse(JSON.stringify(googleSerpCatalog)) as PublicApiDefinition[],
+  JSON.parse(JSON.stringify(bingSerpCatalog)) as PublicApiDefinition,
   {
     id: 'google-intitle',
     method: 'GET',

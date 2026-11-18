@@ -16,9 +16,12 @@ export function jsonSchemaToZod(schema: JsonSchema): z.ZodTypeAny {
     case 'string':
       return z.string().describe(schema.description || '');
     case 'integer':
-      return z.number().int().describe(schema.description || '');
-    case 'number':
-      return z.number().describe(schema.description || '');
+    case 'number': {
+      let number = schema.type === 'integer' ? z.number().int() : z.number();
+      if (schema.minimum !== undefined) number = number.min(schema.minimum);
+      if (schema.maximum !== undefined) number = number.max(schema.maximum);
+      return number.describe(schema.description || '');
+    }
     case 'boolean':
       return z.boolean().describe(schema.description || '');
     case 'array':
@@ -27,7 +30,9 @@ export function jsonSchemaToZod(schema: JsonSchema): z.ZodTypeAny {
       const shape: Record<string, z.ZodTypeAny> = {};
       for (const [key, property] of Object.entries(schema.properties || {})) {
         const value = jsonSchemaToZod(property);
-        shape[key] = schema.required?.includes(key) ? value : value.optional();
+        shape[key] = property.default !== undefined
+          ? value.default(property.default)
+          : schema.required?.includes(key) ? value : value.optional();
       }
       return z.object(shape).strict();
     }
