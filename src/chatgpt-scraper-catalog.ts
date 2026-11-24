@@ -308,7 +308,7 @@ export const chatgptScraperCatalog = [
     "mcpName": "goanyapi_chatgpt_scraper_submit",
     "readOnly": false,
     "docsPath": "/docs/chatgpt-scraper-api",
-    "description": "Create a background ChatGPT task for 1–20 independent questions. A new valid request returns HTTP 202 immediately after credits are reserved and the task is persisted, with task_id and status queued; it does not wait for an answer. task_id confirms GoAnyAPI acceptance, not completed processing. Use goanyapi_chatgpt_scraper_task every 5 seconds until succeeded/failed, and inspect every results[].status for partial failures. Reuse the same idempotency_key and identical inputs to retrieve the same task without duplicate charges; reusing a completed task can return HTTP 200. A new key creates a separately billed task. URL is fixed. Follow-up, country and search settings are supported per question. Country must be a listed inputSchema enum value; omit or use an empty string for automatic location; CN/HK/MO are unsupported. Successful questions are charged, failed questions are automatically refunded, and queries are free. Tasks run in the background. Overdue tasks are closed and refunded when next processed or queried; refunds may be delayed without subsequent activity. Maximum processing time 24 hours; results retained 30 days. Answers and citations may be empty or missing. Downloaded JSON limit 20 MB; retained record limit 1.8 MB including task metadata; undeliverable results are refunded."
+    "description": "Create a background ChatGPT task for 1–20 independent questions. A new valid request returns HTTP 202 immediately after credits are reserved and the task is persisted, with task_id and status queued; it does not wait for an answer. task_id confirms GoAnyAPI acceptance, not completed processing. Use goanyapi_chatgpt_scraper_task every 5 seconds until succeeded/failed, and inspect every results[].status for partial failures. Reuse the same idempotency_key and identical inputs to retrieve the same task without duplicate charges; reusing a completed task can return HTTP 200. A new key creates a separately billed task. URL is fixed. Follow-up, country and search settings are supported per question. Country must be a listed inputSchema enum value; omit or use an empty string for automatic location; CN/HK/MO are unsupported. Successful questions are charged, failed questions are automatically refunded, and queries are free. Tasks run in the background. After 24 hours, GoAnyAPI checks for completed results before closing the task. Delivery retries can take up to one extra hour after that check. Undeliverable questions are refunded. The task record is retained for 30 days after completion; results may expire earlier. Answers and citations may be empty or missing."
   },
   {
     "id": "chatgpt-scraper-task",
@@ -324,13 +324,13 @@ export const chatgptScraperCatalog = [
         "task_id": {
           "type": "string",
           "pattern": "^cgs_[a-f0-9]{64}$",
-          "description": "task_id from the submit tool. Poll no more than once every 5 seconds. Successful and failed tasks are terminal; query and result retrieval are free."
+          "description": "task_id from the submit tool. Poll no more than once every 5 seconds. Successful and failed tasks are terminal. Match each result by its index. Results may expire before the task record. Retry HTTP 503 with the same task ID. Query and result retrieval are free."
         }
       }
     },
     "mcpName": "goanyapi_chatgpt_scraper_task",
     "readOnly": true,
     "docsPath": "/docs/chatgpt-scraper-api",
-    "description": "Get your ChatGPT task status and results using task_id from goanyapi_chatgpt_scraper_submit. Free; poll at intervals of at least 5 seconds. queued/running are pending, succeeded/failed are terminal. succeeded can contain partial failures: inspect every results[].status. credits_reserved, credits_refunded and credits_used report billing; successful inputs are charged even if results are never viewed. Results retain original null and missing values. Results retained 30 days after completion."
+    "description": "Get your ChatGPT task status and results using task_id from goanyapi_chatgpt_scraper_submit. Free; poll at intervals of at least 5 seconds. queued/running are pending, succeeded/failed are terminal. succeeded can contain partial failures: inspect every results[].status. credits_reserved, credits_refunded and credits_used report billing; successful inputs are charged even if results are never viewed. Results retain original null and missing values. Match results by index. Results may expire before the task record; HTTP 410 means results expired and HTTP 503 means retry the query using the same task ID."
   }
 ] as const satisfies readonly PublicApiDefinition[];

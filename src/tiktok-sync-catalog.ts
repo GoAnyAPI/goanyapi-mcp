@@ -50,7 +50,7 @@ export const tiktokSyncCatalog=[
         }
       }
     },
-    "description": "TikTok Video Detail API Supply either url or item_id, never both; resource URL resolution adds no separate charge.. Synchronous public data query. Empty results and failures are free. Each page is billed separately. Use the returned nextCursor only; it may be null even when hasMore is true.",
+    "description": "TikTok Video Detail API Supply either url or item_id, never both; resource URL resolution adds no separate charge.. Synchronous public data query. Empty results and failures are free. Returns video details in data.item with optional music, hashtags, caption annotations, media formats, engagement counts and public attachments in data.item.anchors.",
     "docsPath": "/docs/tiktok-video-detail-api"
   },
   {
@@ -327,23 +327,10 @@ export const tiktokSyncCatalog=[
             "115",
             "111"
           ]
-        },
-        "cursor": {
-          "type": "string",
-          "pattern": "^[0-9]+$",
-          "default": "0",
-          "description": "Collection cursor. Use nextCursor only when returned; never infer an offset."
-        },
-        "count": {
-          "type": "integer",
-          "minimum": 20,
-          "maximum": 20,
-          "default": 20,
-          "description": "Fixed page size 20; actual returned records may be fewer."
         }
       }
     },
-    "description": "TikTok Explore API. Synchronous public data query. Empty results and failures are free. Each page is billed separately. Use the returned nextCursor only; it may be null even when hasMore is true.",
+    "description": "TikTok Explore API. Synchronous public data query. Empty results and failures are free. Each request asks for 20 records and returns one batch. Repeat the same request to fetch another batch; records can overlap. Non-empty successes are billed separately.",
     "docsPath": "/docs/tiktok-explore-api"
   },
   {
@@ -356,23 +343,9 @@ export const tiktokSyncCatalog=[
       "type": "object",
       "additionalProperties": false,
       "required": [],
-      "properties": {
-        "cursor": {
-          "type": "string",
-          "pattern": "^[0-9]+$",
-          "default": "0",
-          "description": "Collection cursor. Use nextCursor only when returned; never infer an offset."
-        },
-        "count": {
-          "type": "integer",
-          "minimum": 20,
-          "maximum": 20,
-          "default": 20,
-          "description": "Fixed page size 20; actual returned records may be fewer."
-        }
-      }
+      "properties": {}
     },
-    "description": "TikTok Feed API. Synchronous public data query. Empty results and failures are free. Each page is billed separately. Use the returned nextCursor only; it may be null even when hasMore is true.",
+    "description": "TikTok Feed API. Synchronous public data query. Empty results and failures are free. Each request asks for 20 records and returns one batch. Repeat the same request to fetch another batch; records can overlap. Non-empty successes are billed separately.",
     "docsPath": "/docs/tiktok-feed-api"
   }
 ] as const satisfies readonly PublicApiDefinition[];

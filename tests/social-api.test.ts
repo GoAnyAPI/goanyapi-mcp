@@ -18,13 +18,13 @@ test('10 个社交工具 tools/list 完整发布枚举与 URL 契约，tools/cal
   const [ct,st]=InMemoryTransport.createLinkedPair();
   try{
     await server.connect(st);await client.connect(ct);
-    const {tools}=await client.listTools();assert.equal(tools.length,10);
+    const {tools}=await client.listTools();assert.equal(tools.length,socialApiCatalog.length);
     for(const api of socialApiCatalog){
       const tool=tools.find(tool=>tool.name===api.mcpName)!;
       assert.deepEqual(tool.inputSchema,api.inputSchema);assert.equal(tool.annotations?.readOnlyHint,true);
       const args=api.inputSchema.examples[0] as Record<string,unknown>;
       const result=await client.callTool({name:tool.name,arguments:args});assert.ok(!result.isError);
-      const call=calls.at(-1)!;assert.equal(call.method,'POST');assert.equal(call.url.pathname,api.path);assert.equal(call.url.search,'');assert.deepEqual(call.body,args);
+      const call=calls.at(-1)!;assert.equal(call.method,'POST');assert.equal(call.url.pathname,api.path);assert.equal(call.url.search,'');assert.deepEqual(call.body,api.id.startsWith('youtube-') ? {...Object.fromEntries(Object.entries(api.inputSchema.properties ?? {}).filter(([,p])=>p && typeof p === 'object' && 'default' in p).map(([name,p])=>[name,(p as any).default])),...args} : args);
     }
     const trending=tools.find(t=>t.name==='goanyapi_twitter_trending')!;
     assert.equal((trending.inputSchema.properties!.language as any).enum.length,15);

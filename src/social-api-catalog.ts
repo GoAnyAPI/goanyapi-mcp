@@ -206,7 +206,7 @@ export const socialApiCatalog=[
         }
       ]
     },
-    "description": "Read a public tweet by ID or full X / Twitter status URL, including author and available media. Tweet numeric ID or full https://x.com/<user>/status/<id> / https://twitter.com/<user>/status/<id> URL. URL parsing is local and adds no separate charge. Short links and other resource types are unsupported. Synchronous query. Each successful request, including empty results, is charged at the configured rate. Failures are free. Business data is in data.result; null, empty and missing business fields are preserved. No pagination. Returns up to 20 records for X trend timelines; no cursor is accepted.",
+    "description": "Read a public X post by ID or URL, including author, text, engagement and attached media. Video media preserves every returned video_variants entry with URL, content_type, bitrate, width and height; HLS or unknown dimensions may be null. Tweet numeric ID or full https://x.com/<user>/status/<id> / https://twitter.com/<user>/status/<id> URL. URL parsing is local and adds no separate charge. Short links and other resource types are unsupported. Synchronous query. Each successful request, including empty results, is charged at the configured rate. Failures are free. Business data is in data.result; null, empty and missing business fields are preserved. No pagination. Returns up to 20 records for X trend timelines; no cursor is accepted.",
     "docsPath": "/docs/twitter-tweet-api"
   },
   {
@@ -893,5 +893,2146 @@ export const socialApiCatalog=[
     },
     "description": "Read current regional trend labels, location and observation times using a WOEID.  Synchronous query. Each successful request, including empty results, is charged at the configured rate. Failures are free. Business data is in data.result; null, empty and missing business fields are preserved. No pagination. Returns up to 20 records for X trend timelines; no cursor is accepted.",
     "docsPath": "/docs/twitter-trends-api"
+  },
+  {
+    "id": "threads-post",
+    "method": "POST",
+    "path": "/api/v1/threads/post-detail",
+    "mcpName": "goanyapi_threads_post",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Threads post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888/post/DfpSOmeHZar"
+          ],
+          "pattern": "^https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/post/[A-Za-z0-9_-]+/?(?:[?#][^\\s]*)?$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.threads.com/@baby_stroller5888/post/DfpSOmeHZar"
+        }
+      ]
+    },
+    "description": "Threads Post: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-post-api"
+  },
+  {
+    "id": "threads-post-replies",
+    "method": "POST",
+    "path": "/api/v1/threads/post-replies",
+    "mcpName": "goanyapi_threads_post_replies",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Threads post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888/post/DfpSOmeHZar"
+          ],
+          "pattern": "^https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/post/[A-Za-z0-9_-]+/?(?:[?#][^\\s]*)?$"
+        },
+        "after": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "sortOrder": {
+          "type": "string",
+          "enum": [
+            "TOP",
+            "RECENT"
+          ],
+          "default": "TOP",
+          "description": "Reply ordering: TOP (top replies), RECENT (recent replies).",
+          "maxLength": 2048
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.threads.com/@baby_stroller5888/post/DfpSOmeHZar",
+          "sortOrder": "TOP"
+        }
+      ]
+    },
+    "description": "Threads Post Replies: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-post-replies-api"
+  },
+  {
+    "id": "threads-post-thread",
+    "method": "POST",
+    "path": "/api/v1/threads/post-thread",
+    "mcpName": "goanyapi_threads_post_thread",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Threads post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@doris___me_/post/DfpVsWoEh6c"
+          ],
+          "pattern": "^https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/post/[A-Za-z0-9_-]+/?(?:[?#][^\\s]*)?$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.threads.com/@doris___me_/post/DfpVsWoEh6c"
+        }
+      ]
+    },
+    "description": "Threads Post Thread: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-post-thread-api"
+  },
+  {
+    "id": "threads-profile",
+    "method": "POST",
+    "path": "/api/v1/threads/user-profile",
+    "mcpName": "goanyapi_threads_profile",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Threads username, @username or full profile URL. Prefer a URL. No prerequisite request or separate charge is required.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888"
+          ],
+          "pattern": "^(?:@?[A-Za-z0-9._]{1,30}|https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "examples": [
+        {
+          "username": "https://www.threads.com/@baby_stroller5888"
+        }
+      ]
+    },
+    "description": "Threads Profile: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-profile-api"
+  },
+  {
+    "id": "threads-user-posts",
+    "method": "POST",
+    "path": "/api/v1/threads/user-posts",
+    "mcpName": "goanyapi_threads_user_posts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Threads username, @username or full profile URL. Prefer a URL. No prerequisite request or separate charge is required.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888"
+          ],
+          "pattern": "^(?:@?[A-Za-z0-9._]{1,30}|https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/?(?:[?#][^\\s]*)?)$"
+        },
+        "after": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        }
+      },
+      "examples": [
+        {
+          "username": "https://www.threads.com/@baby_stroller5888"
+        }
+      ]
+    },
+    "description": "Threads User Posts: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-user-posts-api"
+  },
+  {
+    "id": "threads-user-replies",
+    "method": "POST",
+    "path": "/api/v1/threads/user-replies",
+    "mcpName": "goanyapi_threads_user_replies",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Threads username, @username or full profile URL. Prefer a URL. No prerequisite request or separate charge is required.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888"
+          ],
+          "pattern": "^(?:@?[A-Za-z0-9._]{1,30}|https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/?(?:[?#][^\\s]*)?)$"
+        },
+        "after": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        }
+      },
+      "examples": [
+        {
+          "username": "https://www.threads.com/@baby_stroller5888"
+        }
+      ]
+    },
+    "description": "Threads User Replies: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-user-replies-api"
+  },
+  {
+    "id": "threads-user-media",
+    "method": "POST",
+    "path": "/api/v1/threads/user-media",
+    "mcpName": "goanyapi_threads_user_media",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Threads username, @username or full profile URL. Prefer a URL. No prerequisite request or separate charge is required.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888"
+          ],
+          "pattern": "^(?:@?[A-Za-z0-9._]{1,30}|https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/?(?:[?#][^\\s]*)?)$"
+        },
+        "after": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        }
+      },
+      "examples": [
+        {
+          "username": "https://www.threads.com/@baby_stroller5888"
+        }
+      ]
+    },
+    "description": "Threads User Media: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-user-media-api"
+  },
+  {
+    "id": "threads-user-reposts",
+    "method": "POST",
+    "path": "/api/v1/threads/user-reposts",
+    "mcpName": "goanyapi_threads_user_reposts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Threads username, @username or full profile URL. Prefer a URL. No prerequisite request or separate charge is required.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@mosseri"
+          ],
+          "pattern": "^(?:@?[A-Za-z0-9._]{1,30}|https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/?(?:[?#][^\\s]*)?)$"
+        },
+        "after": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        }
+      },
+      "examples": [
+        {
+          "username": "https://www.threads.com/@mosseri"
+        }
+      ]
+    },
+    "description": "Threads User Reposts: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-user-reposts-api"
+  },
+  {
+    "id": "threads-search-posts",
+    "method": "POST",
+    "path": "/api/v1/threads/search-posts",
+    "mcpName": "goanyapi_threads_search_posts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "bitcoin"
+          ]
+        },
+        "recent": {
+          "type": "integer",
+          "enum": [
+            0,
+            1
+          ],
+          "default": 0,
+          "description": "Post search ordering: 0 (relevance), 1 (most recent)."
+        }
+      },
+      "examples": [
+        {
+          "query": "bitcoin",
+          "recent": 0
+        }
+      ]
+    },
+    "description": "Threads Post Search: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-search-posts-api"
+  },
+  {
+    "id": "threads-search-users",
+    "method": "POST",
+    "path": "/api/v1/threads/search-users",
+    "mcpName": "goanyapi_threads_search_users",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "bitcoin"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "query": "bitcoin"
+        }
+      ]
+    },
+    "description": "Threads User Search: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-search-users-api"
+  },
+  {
+    "id": "threads-related-posts",
+    "method": "POST",
+    "path": "/api/v1/threads/related-posts",
+    "mcpName": "goanyapi_threads_related_posts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Threads post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.threads.com/@baby_stroller5888/post/DfpSOmeHZar"
+          ],
+          "pattern": "^https://(?:www\\.)?threads\\.(?:com|net)/@[A-Za-z0-9._]{1,30}/post/[A-Za-z0-9_-]+/?(?:[?#][^\\s]*)?$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.threads.com/@baby_stroller5888/post/DfpSOmeHZar"
+        }
+      ]
+    },
+    "description": "Threads Related Posts: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-related-posts-api"
+  },
+  {
+    "id": "threads-validate-tag",
+    "method": "POST",
+    "path": "/api/v1/threads/validate-tag",
+    "mcpName": "goanyapi_threads_validate_tag",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag_name"
+      ],
+      "properties": {
+        "tag_name": {
+          "type": "string",
+          "description": "Topic name.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "bitcoin"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "tag_name": "bitcoin"
+        }
+      ]
+    },
+    "description": "Threads Tag Validation: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-validate-tag-api"
+  },
+  {
+    "id": "threads-search-tags",
+    "method": "POST",
+    "path": "/api/v1/threads/search-tags",
+    "mcpName": "goanyapi_threads_search_tags",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag_name"
+      ],
+      "properties": {
+        "tag_name": {
+          "type": "string",
+          "description": "Topic name.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "bitcoin"
+          ]
+        }
+      },
+      "examples": [
+        {
+          "tag_name": "bitcoin"
+        }
+      ]
+    },
+    "description": "Threads Tag Search: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/threads-search-tags-api"
+  },
+  {
+    "id": "reddit-home-feed",
+    "method": "POST",
+    "path": "/api/v1/reddit/home/feed",
+    "mcpName": "goanyapi_reddit_home_feed",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "sort": {
+          "type": "string",
+          "enum": [
+            "BEST",
+            "NEW",
+            "TOP",
+            "HOT",
+            "RISING"
+          ],
+          "default": "BEST",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "sort": "BEST",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit Home Feed: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-home-feed-api"
+  },
+  {
+    "id": "reddit-popular-feed",
+    "method": "POST",
+    "path": "/api/v1/reddit/popular/feed",
+    "mcpName": "goanyapi_reddit_popular_feed",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "sort": {
+          "type": "string",
+          "enum": [
+            "BEST",
+            "NEW",
+            "TOP",
+            "HOT",
+            "RISING"
+          ],
+          "default": "BEST",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "sort": "BEST",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit Popular Feed: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-popular-feed-api"
+  },
+  {
+    "id": "reddit-subreddit-feed",
+    "method": "POST",
+    "path": "/api/v1/reddit/subreddit/feed",
+    "mcpName": "goanyapi_reddit_subreddit_feed",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit subreddit URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/r/wallstreetbets/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "best",
+            "top",
+            "new",
+            "hot",
+            "controversial"
+          ],
+          "default": "best",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "time": {
+          "type": "string",
+          "enum": [
+            "HOUR",
+            "DAY",
+            "WEEK",
+            "ALL"
+          ],
+          "default": "DAY",
+          "description": "Time window. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/r/wallstreetbets/",
+          "sort": "best",
+          "time": "DAY",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit Subreddit Feed: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-subreddit-feed-api"
+  },
+  {
+    "id": "reddit-search",
+    "method": "POST",
+    "path": "/api/v1/reddit/search",
+    "mcpName": "goanyapi_reddit_search",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "united airlines"
+          ]
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "hot",
+            "top",
+            "new",
+            "comments"
+          ],
+          "default": "relevance",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "query": "united airlines",
+          "sort": "relevance",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit Search: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-search-api"
+  },
+  {
+    "id": "reddit-post",
+    "method": "POST",
+    "path": "/api/v1/reddit/post/detail",
+    "mcpName": "goanyapi_reddit_post",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/"
+        }
+      ]
+    },
+    "description": "Reddit Post: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-post-api"
+  },
+  {
+    "id": "reddit-post-comments",
+    "method": "POST",
+    "path": "/api/v1/reddit/post/comments",
+    "mcpName": "goanyapi_reddit_post_comments",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "CONFIDENCE",
+            "TOP",
+            "NEW",
+            "CONTROVERSIAL",
+            "OLD",
+            "QA"
+          ],
+          "default": "CONFIDENCE",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/",
+          "sort": "CONFIDENCE"
+        }
+      ]
+    },
+    "description": "Reddit Post Comments: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-post-comments-api"
+  },
+  {
+    "id": "reddit-comment-replies",
+    "method": "POST",
+    "path": "/api/v1/reddit/post/comment/replies",
+    "mcpName": "goanyapi_reddit_comment_replies",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "commentId"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        },
+        "commentId": {
+          "type": "string",
+          "description": "Comment ID (bare or t1_ prefixed). First call goanyapi_reddit_post_comments with {url: the same post URL}, or POST /api/v1/reddit/post/comments with Bearer authentication and JSON body {url}. Read data.result.comments[].id and pass one as commentId. The prerequisite query is separately billed at its configured price; empty results and failures are free.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "t1_19sqti9kye3cw"
+          ],
+          "pattern": "^(?:t1_)?[A-Za-z0-9]+$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "CONFIDENCE",
+            "TOP",
+            "NEW",
+            "CONTROVERSIAL",
+            "OLD",
+            "QA"
+          ],
+          "default": "CONFIDENCE",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/",
+          "commentId": "t1_19sqti9kye3cw",
+          "sort": "CONFIDENCE"
+        }
+      ]
+    },
+    "description": "Reddit Comment Replies: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-comment-replies-api"
+  },
+  {
+    "id": "reddit-related-posts",
+    "method": "POST",
+    "path": "/api/v1/reddit/post/related",
+    "mcpName": "goanyapi_reddit_related_posts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit post URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/r/wallstreetbets/comments/1xy3kap/"
+        }
+      ]
+    },
+    "description": "Reddit Related Posts: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-related-posts-api"
+  },
+  {
+    "id": "reddit-subreddit",
+    "method": "POST",
+    "path": "/api/v1/reddit/subreddit/info",
+    "mcpName": "goanyapi_reddit_subreddit",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit subreddit URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/r/wallstreetbets/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/r/wallstreetbets/"
+        }
+      ]
+    },
+    "description": "Reddit Subreddit: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-subreddit-api"
+  },
+  {
+    "id": "reddit-profile",
+    "method": "POST",
+    "path": "/api/v1/reddit/user/profile",
+    "mcpName": "goanyapi_reddit_profile",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit user profile URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/user/spez/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/user/spez/"
+        }
+      ]
+    },
+    "description": "Reddit Profile: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-profile-api"
+  },
+  {
+    "id": "reddit-user-posts",
+    "method": "POST",
+    "path": "/api/v1/reddit/user/posts",
+    "mcpName": "goanyapi_reddit_user_posts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit user profile URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/user/spez/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "new"
+          ],
+          "default": "new",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/user/spez/",
+          "sort": "new",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit User Posts: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-user-posts-api"
+  },
+  {
+    "id": "reddit-user-overview",
+    "method": "POST",
+    "path": "/api/v1/reddit/user/overview",
+    "mcpName": "goanyapi_reddit_user_overview",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit user profile URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/user/spez/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "new"
+          ],
+          "default": "new",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/user/spez/",
+          "sort": "new",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit User Overview: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-user-overview-api"
+  },
+  {
+    "id": "reddit-user-comments",
+    "method": "POST",
+    "path": "/api/v1/reddit/user/comments",
+    "mcpName": "goanyapi_reddit_user_comments",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit user profile URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/user/spez/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "new"
+          ],
+          "default": "new",
+          "description": "Result ordering. Values are case-sensitive.",
+          "maxLength": 2048
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Omit on the first request. Use data.result.next_cursor from the previous response unchanged; never invent a cursor.",
+          "maxLength": 16384
+        },
+        "feedLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000,
+          "default": 0,
+          "description": "Cumulative number of records returned on earlier pages, initially 0. This is not a page size."
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/user/spez/",
+          "sort": "new",
+          "feedLength": 0
+        }
+      ]
+    },
+    "description": "Reddit User Comments: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-user-comments-api"
+  },
+  {
+    "id": "reddit-user-verification",
+    "method": "POST",
+    "path": "/api/v1/reddit/user/verification",
+    "mcpName": "goanyapi_reddit_user_verification",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Full Reddit user profile URL. Use a complete resource URL as the primary input. Only https resource links on the documented platform are accepted; unrelated hosts and resource types are rejected.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "examples": [
+            "https://www.reddit.com/user/spez/"
+          ],
+          "pattern": "^https://(?:(?:(?:www|old|new)\\.)?reddit\\.com|redd\\.it)/[^\\s]+$"
+        }
+      },
+      "examples": [
+        {
+          "url": "https://www.reddit.com/user/spez/"
+        }
+      ]
+    },
+    "description": "Reddit User Verification: query public data. Empty results and failed requests are free. Page size uses the service default and cannot be supplied. Use the documented URL, username or keyword. No first, count or limit parameter is accepted. No prerequisite request or separate charge is required. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/reddit-user-verification-api"
+  },
+  {
+    "id": "youtube-video",
+    "method": "POST",
+    "path": "/api/v1/youtube/video/detail",
+    "mcpName": "goanyapi_youtube_video",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube HTTPS resource URL (preferred) or resource ID. Channel URLs accept @handle, /channel/, /c/, /user/; video URLs accept watch?v=, youtu.be/, /shorts/, /embed/, /live/, /v/.",
+          "minLength": 1,
+          "pattern": "^(?:[A-Za-z0-9_-]{11}|https://(?:(?:www\\.|m\\.)?youtube\\.com/(?:watch\\?[^\\s]*v=[A-Za-z0-9_-]{11}[^\\s]*|(?:shorts|embed|live|v)/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?)|(?:www\\.)?youtu\\.be/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?))$"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/watch?v=Y334D183ofE"
+        }
+      ]
+    },
+    "description": "YouTube Video Details. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-video-api"
+  },
+  {
+    "id": "youtube-video-media",
+    "method": "POST",
+    "path": "/api/v1/youtube/video/media",
+    "mcpName": "goanyapi_youtube_video_media",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube HTTPS resource URL (preferred) or resource ID. Channel URLs accept @handle, /channel/, /c/, /user/; video URLs accept watch?v=, youtu.be/, /shorts/, /embed/, /live/, /v/.",
+          "minLength": 1,
+          "pattern": "^(?:[A-Za-z0-9_-]{11}|https://(?:(?:www\\.|m\\.)?youtube\\.com/(?:watch\\?[^\\s]*v=[A-Za-z0-9_-]{11}[^\\s]*|(?:shorts|embed|live|v)/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?)|(?:www\\.)?youtu\\.be/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?))$"
+        },
+        "hd": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "default": "false",
+          "description": "HD mode: string true returns the resolutions actually available for this video, highest first, with MP4 URLs expiring in about 3 hours. String false (default) returns a 360p MP4 URL expiring in about 6 hours. Both modes include captions. HD has a separately configured total price, not an additional charge. HD availability varies by video."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/watch?v=Y334D183ofE"
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=Y334D183ofE",
+          "hd": "true"
+        }
+      ]
+    },
+    "description": "Get video media URLs and captions. Optional hd accepts the strings true or false (default false). Standard returns 360p MP4; HD returns available resolutions, highest first, with a separately configured total price. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-video-media-api"
+  },
+  {
+    "id": "youtube-related-videos",
+    "method": "POST",
+    "path": "/api/v1/youtube/video/related",
+    "mcpName": "goanyapi_youtube_related_videos",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube HTTPS resource URL (preferred) or resource ID. Channel URLs accept @handle, /channel/, /c/, /user/; video URLs accept watch?v=, youtu.be/, /shorts/, /embed/, /live/, /v/.",
+          "minLength": 1,
+          "pattern": "^(?:[A-Za-z0-9_-]{11}|https://(?:(?:www\\.|m\\.)?youtube\\.com/(?:watch\\?[^\\s]*v=[A-Za-z0-9_-]{11}[^\\s]*|(?:shorts|embed|live|v)/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?)|(?:www\\.)?youtu\\.be/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?))$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/watch?v=Y334D183ofE"
+        }
+      ]
+    },
+    "description": "YouTube Related Videos. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-related-videos-api"
+  },
+  {
+    "id": "youtube-video-search",
+    "method": "POST",
+    "path": "/api/v1/youtube/search/videos",
+    "mcpName": "goanyapi_youtube_video_search",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+          "description": "Result language; defaults to en."
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter uppercase country code; defaults to US."
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        },
+        "order": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "date",
+            "views",
+            "rating"
+          ],
+          "default": "relevance",
+          "description": "Search ordering."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "query": "NVIDIA"
+        }
+      ]
+    },
+    "description": "YouTube Video Search. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-video-search-api"
+  },
+  {
+    "id": "youtube-channel-search",
+    "method": "POST",
+    "path": "/api/v1/youtube/search/channels",
+    "mcpName": "goanyapi_youtube_channel_search",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+          "description": "Result language; defaults to en."
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter uppercase country code; defaults to US."
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        },
+        "order": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "date",
+            "views",
+            "rating"
+          ],
+          "default": "relevance",
+          "description": "Search ordering."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "query": "NVIDIA"
+        }
+      ]
+    },
+    "description": "YouTube Channel Search. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-search-api"
+  },
+  {
+    "id": "youtube-search",
+    "method": "POST",
+    "path": "/api/v1/youtube/search/general",
+    "mcpName": "goanyapi_youtube_search",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+          "description": "Result language; defaults to en."
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter uppercase country code; defaults to US."
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        },
+        "order": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "date",
+            "views",
+            "rating"
+          ],
+          "default": "relevance",
+          "description": "Search ordering."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "query": "NVIDIA"
+        }
+      ]
+    },
+    "description": "YouTube Search. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-search-api"
+  },
+  {
+    "id": "youtube-shorts-search",
+    "method": "POST",
+    "path": "/api/v1/youtube/search/shorts",
+    "mcpName": "goanyapi_youtube_shorts_search",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+          "description": "Result language; defaults to en."
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter uppercase country code; defaults to US."
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        },
+        "order": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "date",
+            "views",
+            "rating"
+          ],
+          "default": "relevance",
+          "description": "Search ordering."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "query": "NVIDIA"
+        }
+      ]
+    },
+    "description": "YouTube Shorts Search. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-shorts-search-api"
+  },
+  {
+    "id": "youtube-search-suggestions",
+    "method": "POST",
+    "path": "/api/v1/youtube/search/suggestions",
+    "mcpName": "goanyapi_youtube_search_suggestions",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+          "description": "Result language; defaults to en."
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter uppercase country code; defaults to US."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "query": "NVIDIA"
+        }
+      ]
+    },
+    "description": "YouTube Search Suggestions. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-search-suggestions-api"
+  },
+  {
+    "id": "youtube-channel-id-by-name",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/id/by-name",
+    "mcpName": "goanyapi_youtube_channel_id_by_name",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords.",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+          "description": "Result language; defaults to en."
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Two-letter uppercase country code; defaults to US."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "query": "NVIDIA"
+        }
+      ]
+    },
+    "description": "YouTube Channel ID by Name. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-id-by-name-api"
+  },
+  {
+    "id": "youtube-channel-id-by-url",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/id/by-url",
+    "mcpName": "goanyapi_youtube_channel_id_by_url",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel ID by URL. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-id-by-url-api"
+  },
+  {
+    "id": "youtube-channel-url",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/url",
+    "mcpName": "goanyapi_youtube_channel_url",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel URL. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-url-api"
+  },
+  {
+    "id": "youtube-channel",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/info",
+    "mcpName": "goanyapi_youtube_channel",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-api"
+  },
+  {
+    "id": "youtube-channel-description",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/description",
+    "mcpName": "goanyapi_youtube_channel_description",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel Description. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-description-api"
+  },
+  {
+    "id": "youtube-channel-videos",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/videos",
+    "mcpName": "goanyapi_youtube_channel_videos",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel Videos. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-videos-api"
+  },
+  {
+    "id": "youtube-channel-shorts",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/shorts",
+    "mcpName": "goanyapi_youtube_channel_shorts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel Shorts. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-shorts-api"
+  },
+  {
+    "id": "youtube-channel-posts",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/posts",
+    "mcpName": "goanyapi_youtube_channel_posts",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "YouTube Channel Posts. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-posts-api"
+  },
+  {
+    "id": "youtube-channel-home",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/home",
+    "mcpName": "goanyapi_youtube_channel_home",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "Query public YouTube channel home. Returns items, next_cursor and hasMore. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-home-api"
+  },
+  {
+    "id": "youtube-channel-live",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/live",
+    "mcpName": "goanyapi_youtube_channel_live",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "Query public YouTube channel live. Returns items, next_cursor and hasMore. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-live-api"
+  },
+  {
+    "id": "youtube-channel-courses",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/courses",
+    "mcpName": "goanyapi_youtube_channel_courses",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "Query public YouTube channel courses. Returns items, next_cursor and hasMore. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-courses-api"
+  },
+  {
+    "id": "youtube-channel-playlists",
+    "method": "POST",
+    "path": "/api/v1/youtube/channel/playlists",
+    "mcpName": "goanyapi_youtube_channel_playlists",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Omit initially. Pass data.result.next_cursor from this same endpoint unchanged. Stop when hasMore is false or the cursor is missing, empty or unchanged."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@daojie"
+        }
+      ]
+    },
+    "description": "Query public YouTube channel playlists. Returns items, next_cursor and hasMore. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-channel-playlists-api"
+  },
+  {
+    "id": "youtube-post",
+    "method": "POST",
+    "path": "/api/v1/youtube/post/detail",
+    "mcpName": "goanyapi_youtube_post",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "post_url": {
+          "type": "string",
+          "description": "YouTube HTTPS /post/<postId> URL or post ID. Obtain from the channel posts endpoint using the same channel URL. Each nonempty successful request is billed separately. Obtain via goanyapi_youtube_channel_posts (POST /api/v1/youtube/channel/posts), with Bearer authentication and JSON body inputs url. Read data.result.items[].id. Each nonempty successful request is billed separately. Never auto-submit the target query.",
+          "minLength": 1,
+          "pattern": "^(?:Ug[A-Za-z0-9_-]{8,200}|https://(?:www\\.|m\\.)?youtube\\.com/post/Ug[A-Za-z0-9_-]{8,200}/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "required": [
+        "url",
+        "post_url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@MrBeast",
+          "post_url": "https://www.youtube.com/post/UgkxIkDHJ9iW7XmjtMbke3Ud7rEiV5jSHDnR"
+        }
+      ],
+      "x-prerequisite": {
+        "tool": "goanyapi_youtube_channel_posts",
+        "method": "POST",
+        "path": "/api/v1/youtube/channel/posts",
+        "inputs": [
+          "url"
+        ],
+        "responsePath": "data.result.items[].id",
+        "targetParameter": "post_url"
+      }
+    },
+    "description": "YouTube Community Post. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-post-api"
+  },
+  {
+    "id": "youtube-post-comments",
+    "method": "POST",
+    "path": "/api/v1/youtube/post/comments",
+    "mcpName": "goanyapi_youtube_post_comments",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "sort": {
+          "type": "string",
+          "enum": [
+            "top",
+            "newest"
+          ],
+          "default": "top",
+          "description": "Comment ordering."
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        },
+        "url": {
+          "type": "string",
+          "description": "YouTube channel HTTPS URL, @handle or UC-prefixed channel ID. No prerequisite lookup or separate charge.",
+          "minLength": 1,
+          "pattern": "^(?:@[^\\s/?#]+|UC[A-Za-z0-9_-]{22}|https://(?:www\\.|m\\.)?youtube\\.com/(?:@[^\\s/?#]+|channel/UC[A-Za-z0-9_-]{22}|(?:c|user)/[^\\s/?#]+)/?(?:[?#][^\\s]*)?)$"
+        },
+        "post_url": {
+          "type": "string",
+          "description": "YouTube HTTPS /post/<postId> URL or post ID. Obtain from the channel posts endpoint using the same channel URL. Each nonempty successful request is billed separately. Obtain via goanyapi_youtube_channel_posts (POST /api/v1/youtube/channel/posts), with Bearer authentication and JSON body inputs url. Read data.result.items[].id. Each nonempty successful request is billed separately. Never auto-submit the target query.",
+          "minLength": 1,
+          "pattern": "^(?:Ug[A-Za-z0-9_-]{8,200}|https://(?:www\\.|m\\.)?youtube\\.com/post/Ug[A-Za-z0-9_-]{8,200}/?(?:[?#][^\\s]*)?)$"
+        }
+      },
+      "required": [
+        "url",
+        "post_url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/@MrBeast",
+          "post_url": "https://www.youtube.com/post/UgkxIkDHJ9iW7XmjtMbke3Ud7rEiV5jSHDnR"
+        }
+      ],
+      "x-prerequisite": {
+        "tool": "goanyapi_youtube_channel_posts",
+        "method": "POST",
+        "path": "/api/v1/youtube/channel/posts",
+        "inputs": [
+          "url"
+        ],
+        "responsePath": "data.result.items[].id",
+        "targetParameter": "post_url"
+      }
+    },
+    "description": "YouTube Community Post Comments. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-post-comments-api"
+  },
+  {
+    "id": "youtube-post-comment-replies",
+    "method": "POST",
+    "path": "/api/v1/youtube/post/comments/replies",
+    "mcpName": "goanyapi_youtube_post_comment_replies",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor. Obtain via goanyapi_youtube_post_comments (POST /api/v1/youtube/post/comments), with Bearer authentication and JSON body inputs url, post_url. Read data.result.items[].reply_cursor. Each nonempty successful request is billed separately. Never auto-submit the target query.",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "cursor"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "cursor": "4qmFsgLQAhIrRkVjb21tZW50X3Bvc3RfZGV0YWlsX3BhZ2Vfd2ViX3JlcGxpZXNfcGFnZRqgAkVnVndiM04wYzhvQko3SUJKRlZuYTNoSmEwUklTamxwVnpkWWJXcDBUV0pyWlROVlpEZHlSV2xXTldwVFNFUnVVdW9DQkJBQkdBR3FBNXdCR21rU0dsVm5lazFFTjAxWE5XbExiRmd3TWtGMk9FNDBRV0ZCUWtGbklnSUlBQ29ZVlVOWU5rOVJNMFJyWTNOaVdVNUZOa2c0ZFZGUmRWWkJRQUZJQ25va1ZXZHJlRWxyUkVoS09XbFhOMWh0YW5STlltdGxNMVZrTjNKRmFWWTFhbE5JUkc1U2dnRUNDQUZDTDJOdmJXMWxiblF0Y21Wd2JHbGxjeTFwZEdWdExWVm5lazFFTjAxWE5XbExiRmd3TWtGMk9FNDBRV0ZCUWtGbg%3D%3D"
+        }
+      ],
+      "x-prerequisite": {
+        "tool": "goanyapi_youtube_post_comments",
+        "method": "POST",
+        "path": "/api/v1/youtube/post/comments",
+        "inputs": [
+          "url",
+          "post_url"
+        ],
+        "responsePath": "data.result.items[].reply_cursor",
+        "targetParameter": "cursor"
+      }
+    },
+    "description": "YouTube Community Post Comment Replies. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-post-comment-replies-api"
+  },
+  {
+    "id": "youtube-comments",
+    "method": "POST",
+    "path": "/api/v1/youtube/video/comments",
+    "mcpName": "goanyapi_youtube_comments",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "YouTube HTTPS resource URL (preferred) or resource ID. Channel URLs accept @handle, /channel/, /c/, /user/; video URLs accept watch?v=, youtu.be/, /shorts/, /embed/, /live/, /v/.",
+          "minLength": 1,
+          "pattern": "^(?:[A-Za-z0-9_-]{11}|https://(?:(?:www\\.|m\\.)?youtube\\.com/(?:watch\\?[^\\s]*v=[A-Za-z0-9_-]{11}[^\\s]*|(?:shorts|embed|live|v)/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?)|(?:www\\.)?youtu\\.be/[A-Za-z0-9_-]{11}/?(?:[?#][^\\s]*)?))$"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "top",
+            "newest"
+          ],
+          "default": "top",
+          "description": "Comment ordering."
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "url": "https://www.youtube.com/watch?v=Y334D183ofE"
+        }
+      ]
+    },
+    "description": "YouTube Video Comments. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-comments-api"
+  },
+  {
+    "id": "youtube-comment-replies",
+    "method": "POST",
+    "path": "/api/v1/youtube/video/comments/replies",
+    "mcpName": "goanyapi_youtube_comment_replies",
+    "readOnly": true,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "maxLength": 16000,
+          "description": "Opaque cursor. For replies, obtain data.result.items[].reply_cursor from the corresponding comments endpoint; for subsequent reply pages use data.result.next_cursor. For other lists use data.result.next_cursor. Never invent a cursor. Obtain via goanyapi_youtube_comments (POST /api/v1/youtube/video/comments), with Bearer authentication and JSON body inputs url. Read data.result.items[].reply_cursor. Each nonempty successful request is billed separately. Never auto-submit the target query.",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "cursor"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "cursor": "Eg0SC1kzMzREMTgzb2ZFGAYygwEaUBIaVWd3QzhGLU9KSTh6al9nUVpSaDRBYUFCQWciAggAKhhVQ3BnZGR5bXhJSXpYOTE0bUY2Qm56elEyC1kzMzREMTgzb2ZFQAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3dDOEYtT0pJOHpqX2dRWlJoNEFhQUJBZw%3D%3D"
+        }
+      ],
+      "x-prerequisite": {
+        "tool": "goanyapi_youtube_comments",
+        "method": "POST",
+        "path": "/api/v1/youtube/video/comments",
+        "inputs": [
+          "url"
+        ],
+        "responsePath": "data.result.items[].reply_cursor",
+        "targetParameter": "cursor"
+      }
+    },
+    "description": "YouTube Video Comment Replies. HTTPS resource URLs are preferred where supported. Empty results and failures are free. Prefer YouTube resource URLs. Reply cursors must come from the corresponding comments endpoint. Empty results and failures are free. Business data is in data.result. Null, empty and missing values are preserved. Each nonempty successful page is billed separately; empty results and failures are free. Use only the returned next_cursor; never invent pagination.",
+    "docsPath": "/docs/youtube-comment-replies-api"
   }
 ] as const satisfies readonly PublicApiDefinition[];
